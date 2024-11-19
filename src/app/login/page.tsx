@@ -1,31 +1,52 @@
-import React, { useState } from 'react'
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/context/AuthContext'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 
 export default function Login() {
+  const { status } = useSession()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const auth = useAuth()
+  const router = useRouter()
+
+  React.useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/')
+    }
+  }, [status, router])
+
+  if (status === 'loading') {
+    return <div>Loading...</div>
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    try {
-      await auth.login(username, password)
-    } catch (error) {
+
+    const result = await signIn('credentials', {
+      username,
+      password,
+      redirect: false,
+    })
+
+    if (result?.error) {
       setError('Failed to log in')
+    } else {
+      router.push('/')
     }
   }
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Login to Ezra</CardTitle>
+    <div className="flex justify-center items-center bg-background">
+      <Card className="w-full max-w-md border-border">
+        <CardHeader className="flex flex-row justify-between items-center">
+          <CardTitle className="text-2xl font-bold text-foreground">Login to Ezra</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

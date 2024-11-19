@@ -1,13 +1,15 @@
-import React, { createContext, useState, useContext, useEffect } from 'react'
-import axios from 'axios'
-import { ScriptProps } from 'next/script'
+'use client'
+
+import React, { createContext, useContext } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
+import { Session } from 'next-auth'
 
 interface AuthContextType {
   isAuthenticated: boolean
   isAdmin: boolean
-  token: string | null
+  session: Session | null
   login: (username: string, password: string) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -20,55 +22,33 @@ export const useAuth = () => {
   return context
 }
 
-export const AuthProvider: React.FC<ScriptProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [token, setToken] = useState<string | null>(null)
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token')
-    if (storedToken) {
-      setToken(storedToken)
-      setIsAuthenticated(true)
-      checkAdminStatus(storedToken)
-    }
-  }, [])
-
-  const checkAdminStatus = async (token: string) => {
-    try {
-      const response = await axios.get('/api/user', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      setIsAdmin(response.data.isAdmin)
-    } catch (error) {
-      console.error('Failed to check admin status')
-    }
-  }
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { data: session, status } = useSession()
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('/api/login', { username, password })
-      const { token } = response.data
-      localStorage.setItem('token', token)
-      setToken(token)
-      setIsAuthenticated(true)
-      await checkAdminStatus(token)
+      const result = await signIn('credentials', {
+        username,
+        password,
+        redirect: false,
+      })
+      
+      if (result?.error) {
+        throw new Error(result.error)
+      }
     } catch (error) {
       throw new Error('Login failed')
     }
   }
 
-  const logout = () => {
-    localStorage.removeItem('token')
-    setToken(null)
-    setIsAuthenticated(false)
-    setIsAdmin(false)
+  const logout = async () => {
+    await signOut({ redirect: false })
   }
 
   const value = {
-    isAuthenticated,
-    isAdmin,
-    token,
+    isAuthenticated: status === 'authenticated',
+    isAdmin: session?.user?.isAdmin ?? false,
+    session,
     login,
     logout
   }

@@ -1,25 +1,33 @@
+'use client'
+
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
+import { ThemeToggle } from './ThemeToggle'
 
 export default function Header() {
   const { isAuthenticated, isAdmin, logout } = useAuth()
 
   return (
-    <header className="bg-white shadow">
+    <header className="bg-background border-b">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-gray-800">Ezra ASR</Link>
-        <nav>
+        <Link href="/" className="text-2xl font-bold text-foreground">Ezra ASR</Link>
+        <nav className="flex items-center gap-4">
           {isAuthenticated && (
             <>
-              <Link href="/" className="text-gray-600 hover:text-gray-800 mr-4">Dashboard</Link>
+              <Link href="/" className="text-muted-foreground hover:text-foreground">
+                Dashboard
+              </Link>
               {isAdmin && (
-                <Link href="/admin" className="text-gray-600 hover:text-gray-800 mr-4">Admin</Link>
+                <Link href="/admin" className="text-muted-foreground hover:text-foreground">
+                  Admin
+                </Link>
               )}
               <Button onClick={logout}>Logout</Button>
             </>
           )}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

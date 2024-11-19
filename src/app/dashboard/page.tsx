@@ -1,37 +1,48 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { useAuth } from '@/context/AuthContext'
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
 
 type History = {
-  date: Date
-  document_url: string
-  status: 'processing' | 'completed' | 'failed'
+  id: number
+  user_id: number
+  created_at: string
+  document_path: string
+  status: 'completed' | 'error'
+  error_message: string | null
 }
 
-
 export default function Dashboard() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [file, setFile] = useState<File | null>(null)
   const [driveLink, setDriveLink] = useState('')
   const [history, setHistory] = useState<Array<History>>([])
   const [error, setError] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
-  const { token } = useAuth()
 
   useEffect(() => {
-    fetchHistory()
-  }, [])
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    } else if (status === 'authenticated') {
+      fetchHistory()
+    }
+  }, [status, router])
 
   const fetchHistory = async () => {
     try {
-      const response = await axios.get('/api/history', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      setHistory(response.data)
+      const response = await fetch('/api/history')
+      if (!response.ok) {
+        throw new Error('Failed to fetch history')
+      }
+      const data = await response.json()
+      setHistory(data)
     } catch (error) {
       setError('Failed to fetch history')
     }
@@ -54,13 +65,16 @@ export default function Dashboard() {
     }
 
     try {
-      const response = await axios.post('/api/process', formData, {
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
-        }
+      const response = await fetch('/api/process', {
+        method: 'POST',
+        body: formData,
       })
-      fetchHistory()
+
+      if (!response.ok) {
+        throw new Error('Failed to process audio')
+      }
+
+      await fetchHistory()
       setFile(null)
       setDriveLink('')
     } catch (error) {
@@ -68,6 +82,10 @@ export default function Dashboard() {
     } finally {
       setIsProcessing(false)
     }
+  }
+
+  if (status === 'loading') {
+    return <div>Loading...</div>
   }
 
   return (
@@ -119,13 +137,17 @@ export default function Dashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {history.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{new Date(item.date).toLocaleString()}</TableCell>
+              {history.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
                   <TableCell>
-                    <a href={item.document_url} className="text-blue-500 hover:underline">
-                      Download
-                    </a>
+                    {item.status === 'completed' ? (
+                      <a href={`/api/download/${item.document_path}`} className="text-blue-500 hover:underline">
+                        Download
+                      </a>
+                    ) : (
+                      'N/A'
+                    )}
                   </TableCell>
                   <TableCell>{item.status}</TableCell>
                 </TableRow>
