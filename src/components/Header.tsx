@@ -16,13 +16,18 @@ export default function Header() {
         <nav className="flex items-center gap-4">
           {isAuthenticated && (
             <>
-              <Link href="/" className="text-muted-foreground hover:text-foreground">
-                Dashboard
-              </Link>
-              {isAdmin && (
-                <Link href="/admin" className="text-muted-foreground hover:text-foreground">
-                  Admin
-                </Link>
+              {!isAdmin ? (
+                <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">
+                  Dashboard
+                </Link>) : (
+                <>
+                  <Link href="/admin/dashboard" className="text-muted-foreground hover:text-foreground">
+                    Dashboard
+                  </Link>
+                  <Link href="/admin/setting" className="text-muted-foreground hover:text-foreground">
+                    Setting
+                  </Link>
+                </>
               )}
               <Button onClick={logout}>Logout</Button>
             </>

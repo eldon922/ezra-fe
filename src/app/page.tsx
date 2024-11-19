@@ -2,12 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import dynamic from 'next/dynamic'
 import { useAuth } from '@/context/AuthContext'
-
-const Login = dynamic(() => import('./login/page'))
-const Dashboard = dynamic(() => import('./dashboard/page'))
-const AdminPortal = dynamic(() => import('./admin/page'))
 
 export default function Home() {
   const { isAuthenticated, isAdmin } = useAuth()
@@ -16,16 +11,10 @@ export default function Home() {
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/login')
+    } else if (isAdmin) {
+      router.push('/admin/dashboard')
+    } else {
+      router.push('/dashboard')
     }
-  }, [isAuthenticated, router])
-
-  if (!isAuthenticated) {
-    return <Login />
-  }
-
-  if (isAdmin) {
-    return <AdminPortal />
-  }
-
-  return <Dashboard />
+  }, [isAuthenticated, isAdmin, router])
 }

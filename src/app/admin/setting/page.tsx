@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,18 +11,11 @@ import React, { useEffect, useState } from 'react'
 type User = {
   username: string
   id: string
+  is_admin: boolean
 }
 
-type Log = {
-  date: Date
-  user: string
-  action: string
-  status: string
-}
-
-export default function AdminPortal() {
+export default function AdminSetting() {
   const [users, setUsers] = useState<Array<User>>([])
-  const [logs, setLogs] = useState<Array<Log>>([])
   const [newUsername, setNewUsername] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [error, setError] = useState('')
@@ -28,7 +23,6 @@ export default function AdminPortal() {
 
   useEffect(() => {
     fetchUsers()
-    fetchLogs()
   }, [])
 
   const fetchUsers = async () => {
@@ -37,15 +31,6 @@ export default function AdminPortal() {
       setUsers(response.data)
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to fetch users')
-    }
-  }
-
-  const fetchLogs = async () => {
-    try {
-      const response = await axios.get('/api/admin/logs')
-      setLogs(response.data)
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to fetch logs')
     }
   }
 
@@ -126,50 +111,27 @@ export default function AdminPortal() {
           <Table>
             <TableHeader>
               <TableRow>
+              <TableHead>Id</TableHead>
                 <TableHead>Username</TableHead>
+                <TableHead>Admin</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.map((user) => (
                 <TableRow key={user.id}>
+                  <TableCell>{user.id}</TableCell>
                   <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.is_admin ? 'Yes' : 'No'}</TableCell>
                   <TableCell>
                     <Button 
                       variant="destructive" 
                       onClick={() => handleDeleteUser(user.id)}
+                      disabled={user.is_admin}
                     >
                       Delete
                     </Button>
                   </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Logs</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {logs.map((log, index) => (
-                <TableRow key={index}>
-                  <TableCell>{new Date(log.date).toLocaleString()}</TableCell>
-                  <TableCell>{log.user}</TableCell>
-                  <TableCell>{log.action}</TableCell>
-                  <TableCell>{log.status}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
