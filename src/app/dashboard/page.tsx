@@ -1,50 +1,51 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
-type History = {
+type Transcription = {
   id: number
   user_id: number
   created_at: string
-  document_path: string
+  word_document_path: string
   status: 'completed' | 'error'
   error_message: string | null
 }
 
 export default function Dashboard() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
   const [file, setFile] = useState<File | null>(null)
   const [driveLink, setDriveLink] = useState('')
-  const [history, setHistory] = useState<Array<History>>([])
+  const [transcriptions, setTranscriptions] = useState<Array<Transcription>>([])
   const [error, setError] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
+    console.log(status)
     if (status === 'unauthenticated') {
       router.push('/login')
     } else if (status === 'authenticated') {
-      fetchHistory()
+      fetchTranscriptions()
     }
   }, [status, router])
 
-  const fetchHistory = async () => {
+  const fetchTranscriptions = async () => {
     try {
-      const response = await fetch('/api/history')
+      const response = await fetch('/api/transcriptions')
       if (!response.ok) {
-        throw new Error('Failed to fetch history')
+        throw new Error('Failed to fetch transcriptions')
       }
       const data = await response.json()
-      setHistory(data)
+      setTranscriptions(data)
     } catch (error) {
-      setError('Failed to fetch history')
+      setError('' + error)
     }
   }
 
@@ -74,11 +75,11 @@ export default function Dashboard() {
         throw new Error('Failed to process audio')
       }
 
-      await fetchHistory()
+      await fetchTranscriptions()
       setFile(null)
       setDriveLink('')
     } catch (error) {
-      setError('Failed to process audio')
+      setError('' + error)
     } finally {
       setIsProcessing(false)
     }
@@ -137,17 +138,17 @@ export default function Dashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {history.map((item) => (
+              {transcriptions.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
                   <TableCell>
-                    {item.status === 'completed' ? (
-                      <a href={`/api/download/${item.document_path}`} className="text-blue-500 hover:underline">
+                    {/* {item.status === 'completed' ? ( */}
+                      <a href={`/api/download/${item.word_document_path}`} className="text-blue-500 hover:underline">
                         Download
                       </a>
-                    ) : (
+                    {/* ) : (
                       'N/A'
-                    )}
+                    )} */}
                   </TableCell>
                   <TableCell>{item.status}</TableCell>
                 </TableRow>
