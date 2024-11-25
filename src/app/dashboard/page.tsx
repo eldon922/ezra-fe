@@ -50,7 +50,7 @@ export default function Dashboard() {
         description: `An unexpected error occurred while fetching transcriptions (${error})`,
       })
     }
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     console.log(status)
