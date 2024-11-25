@@ -133,10 +133,12 @@ export default function Dashboard() {
             <div>
               <Label htmlFor="file">Audio File</Label>
               <Input
+                key={file ? 'file-input' : 'empty-input'}
                 id="file"
                 type="file"
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
                 accept="audio/*"
+                value={file ? undefined : ''}
               />
             </div>
             <div>
