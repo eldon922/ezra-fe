@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { useToast } from '@/hooks/use-toast'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 type Transcription = {
   id: number
@@ -29,16 +29,7 @@ export default function Dashboard() {
   const [transcriptions, setTranscriptions] = useState<Array<Transcription>>([])
   const [isProcessing, setIsProcessing] = useState(false)
 
-  useEffect(() => {
-    console.log(status)
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    } else if (status === 'authenticated') {
-      fetchTranscriptions()
-    }
-  }, [status, router])
-
-  const fetchTranscriptions = async () => {
+  const fetchTranscriptions = useCallback(async () => {
     try {
       const response = await fetch('/api/transcriptions')
       if (!response.ok) {
@@ -56,10 +47,19 @@ export default function Dashboard() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An unexpected error occurred while fetching transcriptions",
+        description: `An unexpected error occurred while fetching transcriptions (${error})`,
       })
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    console.log(status)
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    } else if (status === 'authenticated') {
+      fetchTranscriptions()
+    }
+  }, [status, router, fetchTranscriptions])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -106,11 +106,10 @@ export default function Dashboard() {
       setFile(null)
       setDriveLink('')
     } catch (error) {
-      console.log(error)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An unexpected error occurred while processing the audio",
+        description: `An unexpected error occurred while processing the audio (${error})`,
       })
     } finally {
       setIsProcessing(false)

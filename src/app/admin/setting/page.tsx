@@ -27,41 +27,75 @@ export default function AdminSetting() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('/api/admin/users')
-      setUsers(response.data)
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to fetch users')
+      const response = await fetch('/api/admin/users', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to fetch users (${errorData})`);
+      }
+      
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      setError(`Failed to fetch users (${error})`);
     }
   }
 
   const handleAddUser = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
     
     try {
-      await axios.post('/api/admin/users', {
-        username: newUsername,
-        password: newPassword
-      })
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: newUsername,
+          password: newPassword,
+        }),
+      });
       
-      await fetchUsers()
-      setNewUsername('')
-      setNewPassword('')
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to add user')
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to add user (${errorData})`);
+      }
+      
+      await fetchUsers();
+      setNewUsername('');
+      setNewPassword('');
+    } catch (error) {
+      setError(`Failed to add user (${error})`);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
   const handleDeleteUser = async (userId: string) => {
-    setError('')
+    setError('');
     try {
-      await axios.delete(`/api/admin/users?id=${userId}`)
-      await fetchUsers()
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to delete user')
+      const response = await fetch(`/api/admin/users?id=${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete user');
+      }
+      
+      await fetchUsers();
+    } catch (error) {
+      setError(`Failed to delete user (${error})`);
     }
   }
 

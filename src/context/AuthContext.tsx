@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(result.error)
       }
     } catch (error) {
-      throw new Error('Login failed')
+      throw new Error(`Login failed (${error})`)
     }
   }
 
