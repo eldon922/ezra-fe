@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
     const token = await getToken({ req })
-  
+
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 403 })
     }
@@ -18,9 +18,9 @@ export async function GET(
         'Authorization': `Bearer ${token.accessToken}`,
       },
     })
-    
+
     const data = await response.arrayBuffer()
-    
+
     return new NextResponse(data, {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
