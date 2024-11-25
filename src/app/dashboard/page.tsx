@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { useToast } from '@/hooks/use-toast'
 import { Toaster } from "@/components/ui/toaster"
+import { useToast } from '@/hooks/use-toast'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -174,13 +174,13 @@ export default function Dashboard() {
                 <TableRow key={item.id}>
                   <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
                   <TableCell>
-                    {/* {item.status === 'completed' ? ( */}
+                    {item.status === 'completed' ? (
                       <a href={`/api/download/${item.word_document_path}`} className="text-blue-500 hover:underline">
                         Download
                       </a>
-                    {/* ) : (
+                    ) : (
                       'N/A'
-                    )} */}
+                    )}
                   </TableCell>
                   <TableCell>{item.status}</TableCell>
                 </TableRow>
