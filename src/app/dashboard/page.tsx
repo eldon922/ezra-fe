@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useToast } from '@/hooks/use-toast'
+import { Toaster } from "@/components/ui/toaster"
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -19,12 +21,12 @@ type Transcription = {
 }
 
 export default function Dashboard() {
+  const { toast } = useToast()
   const { status } = useSession()
   const router = useRouter()
   const [file, setFile] = useState<File | null>(null)
   const [driveLink, setDriveLink] = useState('')
   const [transcriptions, setTranscriptions] = useState<Array<Transcription>>([])
-  const [error, setError] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
@@ -40,18 +42,27 @@ export default function Dashboard() {
     try {
       const response = await fetch('/api/transcriptions')
       if (!response.ok) {
-        throw new Error('Failed to fetch transcriptions')
+        const data = await response.json()
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: data.error,
+        })
+        return
       }
       const data = await response.json()
       setTranscriptions(data)
     } catch (error) {
-      setError('' + error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred while fetching transcriptions",
+      })
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
     setIsProcessing(true)
 
     const formData = new FormData()
@@ -60,7 +71,11 @@ export default function Dashboard() {
     } else if (driveLink) {
       formData.append('drive_link', driveLink)
     } else {
-      setError('Please provide an audio file or Google Drive link')
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please provide an audio file or Google Drive link",
+      })
       setIsProcessing(false)
       return
     }
@@ -71,15 +86,32 @@ export default function Dashboard() {
         body: formData,
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Failed to process audio')
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: data.error,
+        })
+        return
       }
+
+      toast({
+        title: "Success",
+        description: "Audio processing started successfully",
+      })
 
       await fetchTranscriptions()
       setFile(null)
       setDriveLink('')
     } catch (error) {
-      setError('' + error)
+      console.log(error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred while processing the audio",
+      })
     } finally {
       setIsProcessing(false)
     }
@@ -91,6 +123,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
+      <Toaster />
       <Card>
         <CardHeader>
           <CardTitle>Upload Audio for Transcription</CardTitle>
@@ -116,7 +149,6 @@ export default function Dashboard() {
                 placeholder="https://drive.google.com/..."
               />
             </div>
-            {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" disabled={isProcessing}>
               {isProcessing ? 'Processing...' : 'Submit'}
             </Button>
