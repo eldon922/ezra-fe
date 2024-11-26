@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import Link from 'next/link'
 import { ThemeToggle } from './ThemeToggle'
-const pjson = require('../../package.json')
+const pjson = await import('../../package.json')
 
 export default function Header() {
   const { isAuthenticated, isAdmin, logout } = useAuth()
