@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from '@/hooks/use-toast'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -14,6 +16,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
+  const { toast } = useToast()
 
   React.useEffect(() => {
     if (status === 'authenticated') {
@@ -37,13 +40,23 @@ export default function Login() {
 
     if (result?.error) {
       setError('Failed to log in')
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "Invalid username or password",
+      })
     } else {
+      toast({
+        title: "Success",
+        description: "Successfully login!",
+      })
       router.push('/')
     }
   }
 
   return (
     <div className="flex justify-center items-center bg-background">
+      <Toaster />
       <Card className="w-full max-w-md border-border">
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle className="text-2xl font-bold text-foreground">Login to Ezra</CardTitle>
@@ -70,7 +83,6 @@ export default function Login() {
                 required
               />
             </div>
-            {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" className="w-full">Login</Button>
           </form>
         </CardContent>
