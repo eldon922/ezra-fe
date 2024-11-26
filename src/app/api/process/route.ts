@@ -14,8 +14,6 @@ export async function POST(req: NextRequest) {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token.accessToken}`,
-      'Connection': 'keep-alive', 
-      'Keep-Alive': 'timeout=0, max=0'
     },
     body: formData,
   })
