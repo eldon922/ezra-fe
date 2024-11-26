@@ -54,11 +54,12 @@ export default function Dashboard() {
   }, [toast])
 
   useEffect(() => {
-    console.log(status)
     if (status === 'unauthenticated') {
       router.push('/login')
     } else if (status === 'authenticated') {
       fetchTranscriptions()
+      const interval = setInterval(fetchTranscriptions, 5000)
+      return () => clearInterval(interval)
     }
   }, [status, router, fetchTranscriptions])
 
