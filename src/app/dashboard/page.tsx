@@ -66,8 +66,18 @@ export default function Dashboard() {
     e.preventDefault()
     setIsProcessing(true)
 
+    if((file && file.size !== 0 && driveLink)) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please provide an audio file or Google Drive link",
+      })
+      setIsProcessing(false)
+      return
+    }
+
     const formData = new FormData()
-    if (file) {
+    if (file && file.size !== 0) {
       formData.append('file', file)
     } else if (driveLink) {
       formData.append('drive_link', driveLink)
