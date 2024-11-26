@@ -25,7 +25,7 @@ export default function Dashboard() {
   const { toast } = useToast()
   const { status } = useSession()
   const router = useRouter()
-  const [file, setFile] = useState<File | null>(null)
+  const [file, setFile] = useState<File | null>(new File([], ''))
   const [driveLink, setDriveLink] = useState('')
   const [transcriptions, setTranscriptions] = useState<Array<Transcription>>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -116,6 +116,7 @@ export default function Dashboard() {
 
       await fetchTranscriptions()
       setFile(null)
+      setTimeout(() => setFile(new File([], '')), 0)
       setDriveLink('')
     } catch (error) {
       toast({
