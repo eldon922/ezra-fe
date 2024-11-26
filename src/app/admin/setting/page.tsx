@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { LoadingSpinner } from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React, { useEffect, useState } from 'react'
 
@@ -32,12 +33,12 @@ export default function AdminSetting() {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`Failed to fetch users (${errorData})`);
       }
-      
+
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -49,7 +50,7 @@ export default function AdminSetting() {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    
+
     try {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
@@ -61,12 +62,12 @@ export default function AdminSetting() {
           password: newPassword,
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`Failed to add user (${errorData})`);
       }
-      
+
       await fetchUsers();
       setNewUsername('');
       setNewPassword('');
@@ -86,12 +87,12 @@ export default function AdminSetting() {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to delete user');
       }
-      
+
       await fetchUsers();
     } catch (error) {
       setError(`Failed to delete user (${error})`);
@@ -130,7 +131,7 @@ export default function AdminSetting() {
             </div>
             {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Adding...' : 'Add User'}
+              {isLoading ? <><LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />Adding</> : 'Add User'}
             </Button>
           </form>
         </CardContent>
@@ -144,7 +145,7 @@ export default function AdminSetting() {
           <Table>
             <TableHeader>
               <TableRow>
-              <TableHead>Id</TableHead>
+                <TableHead>Id</TableHead>
                 <TableHead>Username</TableHead>
                 <TableHead>Admin</TableHead>
                 <TableHead>Actions</TableHead>
@@ -157,8 +158,8 @@ export default function AdminSetting() {
                   <TableCell>{user.username}</TableCell>
                   <TableCell>{user.is_admin ? 'Yes' : 'No'}</TableCell>
                   <TableCell>
-                    <Button 
-                      variant="destructive" 
+                    <Button
+                      variant="destructive"
                       onClick={() => handleDeleteUser(user.id)}
                       disabled={user.is_admin}
                     >

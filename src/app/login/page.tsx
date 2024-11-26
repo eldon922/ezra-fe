@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { LoadingSpinner } from '@/components/ui/spinner'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from '@/hooks/use-toast'
 import { signIn, useSession } from 'next-auth/react'
@@ -14,6 +15,7 @@ export default function Login() {
   const { status } = useSession()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
@@ -29,6 +31,7 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
 
     const result = await signIn('credentials', {
       username,
@@ -49,6 +52,8 @@ export default function Login() {
       })
       router.push('/')
     }
+
+    setIsLoading(false)
   }
 
   return (
@@ -80,7 +85,10 @@ export default function Login() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full">Login</Button>
+            <Button disabled={isLoading} type="submit" className="w-full">
+              {isLoading && <LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />}
+              Login
+            </Button>
           </form>
         </CardContent>
       </Card>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { LoadingSpinner } from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from '@/hooks/use-toast'
@@ -151,7 +152,7 @@ export default function Dashboard() {
               />
             </div>
             <Button type="submit" disabled={isProcessing}>
-              {isProcessing ? 'Processing...' : 'Submit'}
+              {isProcessing ? <><LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />Processing</> : 'Submit'}
             </Button>
           </form>
         </CardContent>
@@ -176,14 +177,21 @@ export default function Dashboard() {
                   <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
                   <TableCell>
                     {item.status === 'completed' ? (
-                      <a href={`/api/download/${item.word_document_path}`} className="text-blue-500 hover:underline">
-                        Download
-                      </a>
+                      <Button onClick={(e) => {
+                        e.preventDefault()
+                        e.nativeEvent.stopImmediatePropagation()
+                        window.location.href = `/api/download/${item.word_document_path}`
+                      }}>Download</Button>
                     ) : (
                       'N/A'
                     )}
                   </TableCell>
-                  <TableCell>{item.status}</TableCell>
+                  <TableCell><div className="flex items-center">
+                    {item.status !== 'completed' && item.status !== 'error' && (
+                      <LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {item.status}
+                  </div></TableCell>
                 </TableRow>
               ))}
             </TableBody>

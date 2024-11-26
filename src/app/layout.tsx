@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Header from '@/components/Header';
 import Providers from '@/components/Providers';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import NextTopLoader from 'nextjs-toploader';
+import { useEffect } from 'react';
 import './globals.css';
-import { signOut } from 'next-auth/react'
 
 export default function RootLayout({
   children,
@@ -18,7 +19,7 @@ export default function RootLayout({
     const originalFetch = window.fetch
     window.fetch = async (...args) => {
       const response = await originalFetch(...args)
-      
+
       // Only handle API routes
       if (args[0].toString().startsWith('/api/')) {
         if (response.status === 401) {
@@ -26,7 +27,7 @@ export default function RootLayout({
           router.push('/login')
         }
       }
-      
+
       return response
     }
 
@@ -38,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
+        <NextTopLoader />
         <Providers>
           <Header />
           <main className="container mx-auto px-4 py-8">{children}</main>
