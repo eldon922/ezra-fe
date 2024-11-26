@@ -1,10 +1,10 @@
 'use client'
 
-import React from 'react'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
+import Link from 'next/link'
 import { ThemeToggle } from './ThemeToggle'
+const pjson = require('../../package.json')
 
 export default function Header() {
   const { isAuthenticated, isAdmin, logout } = useAuth()
@@ -12,7 +12,10 @@ export default function Header() {
   return (
     <header className="bg-background border-b">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-foreground">Ezra ASR</Link>
+        <div className="flex items-center gap-2">
+          <Link href="/" className="text-2xl font-bold text-foreground">Ezra ASR</Link>
+          <span className="text-xs text-muted-foreground">v{pjson.version}</span>
+        </div>
         <nav className="flex items-center gap-4">
           {isAuthenticated && (
             <>
