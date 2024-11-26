@@ -14,7 +14,6 @@ export default function Login() {
   const { status } = useSession()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const router = useRouter()
   const { toast } = useToast()
 
@@ -30,7 +29,6 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
 
     const result = await signIn('credentials', {
       username,
@@ -39,11 +37,10 @@ export default function Login() {
     })
 
     if (result?.error) {
-      setError('Failed to log in')
       toast({
         variant: "destructive",
         title: "Authentication Error",
-        description: "Invalid username or password",
+        description: `Failed to log in (${result?.error})`,
       })
     } else {
       toast({
