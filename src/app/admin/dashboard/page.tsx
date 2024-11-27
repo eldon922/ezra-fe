@@ -118,7 +118,7 @@ export default function AdminDashboard() {
 
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">Recent Transcriptions</h2>
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-md rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-x-auto shadow-md rounded-lg">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
 
       <div>
         <h2 className="text-2xl font-bold mb-4 dark:text-white">Recent Error Logs</h2>
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-md rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-x-auto shadow-md rounded-lg">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
