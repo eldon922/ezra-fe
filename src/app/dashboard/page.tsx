@@ -14,11 +14,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 type Transcription = {
   id: number
-  user_id: number
   created_at: string
+  updated_at: string
+  status: 'completed' | 'error' | 'transcribing' | 'proofreading' | 'converting'
   word_document_path: string
-  status: 'completed' | 'error'
-  error_message: string | null
+  audio_file_name: string
 }
 
 export default function Dashboard() {
@@ -67,7 +67,7 @@ export default function Dashboard() {
     e.preventDefault()
     setIsProcessing(true)
 
-    if((file && file.size !== 0 && driveLink)) {
+    if ((file && file.size !== 0 && driveLink)) {
       toast({
         variant: "destructive",
         title: "Error",
@@ -179,7 +179,8 @@ export default function Dashboard() {
             <TableHeader>
               <TableRow>
                 <TableHead>Date</TableHead>
-                <TableHead>Document</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Result</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -187,6 +188,7 @@ export default function Dashboard() {
               {transcriptions.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
+                  <TableCell>{item.audio_file_name}</TableCell>
                   <TableCell>
                     {item.status === 'completed' ? (
                       <Button onClick={(e) => {
