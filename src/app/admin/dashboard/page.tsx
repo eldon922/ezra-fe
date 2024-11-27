@@ -158,7 +158,7 @@ export default function AdminDashboard() {
                 <tr key={log.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{log.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{new Date(log.created_at).toLocaleString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{log.error_message}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-pre-wrap">{log.error_message}</td>
                 </tr>
               ))}
             </tbody>
