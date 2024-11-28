@@ -86,8 +86,8 @@ export default function Login() {
               />
             </div>
             <Button disabled={isLoading} type="submit" className="w-full">
-              {isLoading && <LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />}
               Login
+              {isLoading && <LoadingSpinner className="h-4 w-4 animate-spin" />}
             </Button>
           </form>
         </CardContent>

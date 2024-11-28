@@ -131,7 +131,7 @@ export default function AdminSetting() {
             </div>
             {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? <><LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />Adding</> : 'Add User'}
+              {isLoading ? <>Adding<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Add User'}
             </Button>
           </form>
         </CardContent>

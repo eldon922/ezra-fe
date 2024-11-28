@@ -164,7 +164,7 @@ export default function Dashboard() {
               />
             </div>
             <Button type="submit" disabled={isProcessing}>
-              {isProcessing ? <><LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />Processing</> : 'Submit'}
+              {isProcessing ? <>Processing<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Submit'}
             </Button>
           </form>
         </CardContent>
