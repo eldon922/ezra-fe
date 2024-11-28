@@ -3,11 +3,18 @@
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { ThemeToggle } from './ThemeToggle'
+import { LoadingSpinner } from './ui/spinner'
 const pjson = await import('../../package.json')
 
 export default function Header() {
   const { isAuthenticated, isAdmin, logout } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (isAuthenticated) setIsLoading(false)
+  }, [isAuthenticated])
 
   return (
     <header className="bg-background border-b">
@@ -32,7 +39,13 @@ export default function Header() {
                   </Link>
                 </>
               )}
-              <Button onClick={logout}>Logout</Button>
+              <Button disabled={isLoading} onClick={() => {
+                setIsLoading(true)
+                logout()
+              }}>
+                Logout
+                {isLoading && <LoadingSpinner className="h-4 w-4 animate-spin" />}
+              </Button>
             </>
           )}
           <ThemeToggle />
