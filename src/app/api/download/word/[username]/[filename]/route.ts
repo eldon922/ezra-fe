@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ filename: string }> }
+  { params }: { params: Promise<{ username: string, filename: string }> }
 ) {
   try {
     const token = await getToken({ req })
@@ -12,8 +12,9 @@ export async function GET(
       return NextResponse.json({ error: 'Not authenticated' }, { status: 403 })
     }
 
+    const username = (await params).username
     const filename = (await params).filename
-    const response = await fetch(`${process.env.BACKEND_URL}/download/word/${filename}`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/download/word/${username}/${filename}`, {
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
       },
