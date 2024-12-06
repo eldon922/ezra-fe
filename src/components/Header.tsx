@@ -37,6 +37,9 @@ export default function Header() {
                   <Link href="/admin/users" className="text-muted-foreground hover:text-foreground">
                     Users
                   </Link>
+                  <Link href="/admin/system-prompts" className="text-muted-foreground hover:text-foreground">
+                    System Prompts
+                  </Link>
                 </>
               )}
               <Button disabled={isLoading} onClick={() => {
