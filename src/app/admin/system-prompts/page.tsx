@@ -185,6 +185,7 @@ export default function SystemPrompts() {
                 onChange={(e) => setNewPrompt(e.target.value)}
                 required
                 disabled={isLoading}
+                rows={20}
               />
             </div>
             {error && <p className="text-red-500">{error}</p>}
@@ -197,7 +198,7 @@ export default function SystemPrompts() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Set Active System Prompt</CardTitle>
+          <CardTitle>Active System Prompt</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
