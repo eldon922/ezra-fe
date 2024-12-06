@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { useTheme } from 'next-themes';
 
 type User = {
   id: number
@@ -28,6 +31,8 @@ type Transcription = {
 
 type ErrorLog = {
   id: number
+  user_id: number
+  transcription_id: number
   created_at: string
   error_message: string
   stack_trace: string | null
@@ -40,6 +45,7 @@ type Stats = {
 }
 
 export default function AdminDashboard() {
+  const { theme } = useTheme()
   const { data: session } = useSession()
   const [users, setUsers] = useState<User[]>([])
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([])
@@ -63,7 +69,6 @@ export default function AdminDashboard() {
           statsRes.json(),
         ])
 
-        console.log(usersData)
         setUsers(usersData)
         setTranscriptions(transcriptionsData)
         setErrorLogs(logsData)
@@ -264,17 +269,73 @@ export default function AdminDashboard() {
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Info</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Created At</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Error Message</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Stack Trace</th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {errorLogs.map((log) => (
                 <tr key={log.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{log.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{new Date(log.created_at).toLocaleString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <div>ID: {log.id}</div>
+                    <div>User ID: {log.user_id}</div>
+                    <div>Transcription ID: {log.transcription_id}</div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{new Date(log.created_at).toLocaleString()}</td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-pre-wrap">{log.error_message}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    {log.stack_trace !== "" ? (
+                      <>
+                        <button
+                          onClick={() => {
+                            const modal = document.getElementById(`stack-modal-${log.id}`) as HTMLDialogElement
+                            if (modal) {
+                              document.body.style.overflow = 'hidden'
+                              modal.showModal()
+                            }
+                          }}
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                        >
+                          View
+                        </button>
+                        <dialog
+                          id={`stack-modal-${log.id}`}
+                          className="modal p-6 mx-auto rounded-lg bg-white dark:bg-gray-800 shadow-xl backdrop:bg-black backdrop:opacity-50 w-3/4 overflow-y-auto"
+                          onClick={(e) => {
+                            const modal = e.target as HTMLDialogElement
+                            const rect = modal.getBoundingClientRect()
+                            const isInDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+                              rect.left <= e.clientX && e.clientX <= rect.left + rect.width)
+                            if (!isInDialog) {
+                              modal.close()
+                            }
+                          }}
+                          onClose={() => {
+                            document.body.style.overflow = 'auto'
+                          }}
+                        >
+                          <div className="flex flex-col">
+                            <div className="flex justify-between items-center mb-4">
+                              <h3 className="text-lg font-bold dark:text-white">Stack Trace</h3>
+                            </div>
+                            <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto">
+                              <SyntaxHighlighter
+                                language="javascript"
+                                style={theme === 'dark' ? atomOneDark : atomOneLight}
+                                customStyle={{ backgroundColor: 'transparent' }}
+                              >
+                                {log.stack_trace || ''}
+                              </SyntaxHighlighter>
+                            </pre>
+                          </div>
+                        </dialog>
+                      </>
+                    ) : (
+                      'N/A'
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
