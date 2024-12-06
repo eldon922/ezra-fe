@@ -8,7 +8,7 @@ import { LoadingSpinner } from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Toaster } from '@/components/ui/toaster'
 import { useToast } from '@/hooks/use-toast'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 type SystemPrompt = {
   id: number
@@ -27,12 +27,7 @@ export default function SystemPrompts() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    fetchSystemPrompts()
-    fetchSystemPromptActive()
-  }, [])
-
-  const fetchSystemPrompts = async () => {
+  const fetchSystemPrompts = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/system-prompts', {
         method: 'GET',
@@ -55,7 +50,37 @@ export default function SystemPrompts() {
         description: `Failed to fetch system prompts (${error})`,
       })
     }
-  }
+  }, [])
+
+  const fetchSystemPromptActive = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/settings/active-system-prompt', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to fetch active system prompt (${errorData})`);
+      }
+
+      const data = await response.json();
+      setActiveSystemPrompt(data);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to fetch active system prompt (${error})`,
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchSystemPrompts()
+    fetchSystemPromptActive()
+  }, [fetchSystemPrompts, fetchSystemPromptActive])
 
   const handleAddSystemPrompt = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,31 +120,6 @@ export default function SystemPrompts() {
       })
     } finally {
       setIsLoading(false);
-    }
-  }
-
-  const fetchSystemPromptActive = async () => {
-    try {
-      const response = await fetch('/api/admin/settings/active-system-prompt', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to fetch active system prompt (${errorData})`);
-      }
-
-      const data = await response.json();
-      setActiveSystemPrompt(data);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: `Failed to fetch active system prompt (${error})`,
-      })
     }
   }
 

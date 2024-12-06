@@ -8,7 +8,7 @@ import { LoadingSpinner } from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Toaster } from '@/components/ui/toaster'
 import { useToast } from '@/hooks/use-toast'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 type User = {
   id: number
@@ -25,11 +25,7 @@ export default function AdminSetting() {
   const [newPassword, setNewPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/users', {
         method: 'GET',
@@ -52,7 +48,11 @@ export default function AdminSetting() {
         description: `Failed to fetch users (${error})`,
       })
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchUsers()
+  }, [fetchUsers])
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
