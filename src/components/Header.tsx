@@ -34,8 +34,8 @@ export default function Header() {
                   <Link href="/admin/dashboard" className="text-muted-foreground hover:text-foreground">
                     Dashboard
                   </Link>
-                  <Link href="/admin/setting" className="text-muted-foreground hover:text-foreground">
-                    Setting
+                  <Link href="/admin/users" className="text-muted-foreground hover:text-foreground">
+                    Users
                   </Link>
                 </>
               )}

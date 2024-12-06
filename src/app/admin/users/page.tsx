@@ -6,15 +6,18 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Toaster } from '@/components/ui/toaster'
+import { useToast } from '@/hooks/use-toast'
 import React, { useEffect, useState } from 'react'
 
 type User = {
+  id: number
   username: string
-  id: string
   is_admin: boolean
 }
 
 export default function AdminSetting() {
+  const { toast } = useToast()
   const [users, setUsers] = useState<Array<User>>([])
   const [newUsername, setNewUsername] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -42,7 +45,11 @@ export default function AdminSetting() {
       const data = await response.json();
       setUsers(data);
     } catch (error) {
-      setError(`Failed to fetch users (${error})`);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to fetch users (${error})`,
+      })
     }
   }
 
@@ -68,17 +75,26 @@ export default function AdminSetting() {
         throw new Error(`Failed to add user (${errorData})`);
       }
 
+      toast({
+        title: "Success",
+        description: `Add user ${newUsername} success`,
+      })
+
       await fetchUsers();
       setNewUsername('');
       setNewPassword('');
     } catch (error) {
-      setError(`Failed to add user (${error})`);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to add user (${error})`,
+      })
     } finally {
       setIsLoading(false);
     }
   }
 
-  const handleDeleteUser = async (userId: string) => {
+  const handleDeleteUser = async (userId: number) => {
     setError('');
     try {
       const response = await fetch(`/api/admin/users?id=${userId}`, {
@@ -93,14 +109,24 @@ export default function AdminSetting() {
         throw new Error(errorData.error || 'Failed to delete user');
       }
 
+      toast({
+        title: "Success",
+        description: "Delete user success",
+      })
+
       await fetchUsers();
     } catch (error) {
-      setError(`Failed to delete user (${error})`);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to delete user (${error})`,
+      })
     }
   }
 
   return (
     <div className="space-y-8">
+      <Toaster />
       <Card>
         <CardHeader>
           <CardTitle>Add New User</CardTitle>
