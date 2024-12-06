@@ -16,7 +16,7 @@ type Transcription = {
   id: number
   created_at: string
   updated_at: string
-  status: 'completed' | 'error' | 'transcribing' | 'proofreading' | 'converting'
+  status: 'completed' | 'error' | 'waiting' | 'transcribing' | 'proofreading' | 'converting'
   word_document_path: string
   audio_file_name: string
 }
