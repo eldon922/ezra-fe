@@ -8,6 +8,8 @@ type User = {
   id: number
   username: string
   is_admin: boolean
+  created_at: string
+  transcription_count: number
 }
 
 type Transcription = {
@@ -21,6 +23,7 @@ type Transcription = {
   status: 'completed' | 'error' | 'waiting' | 'transcribing' | 'proofreading' | 'converting'
   created_at: string
   updated_at: string
+  username: string
 }
 
 type ErrorLog = {
@@ -60,6 +63,7 @@ export default function AdminDashboard() {
           statsRes.json(),
         ])
 
+        console.log(usersData)
         setUsers(usersData)
         setTranscriptions(transcriptionsData)
         setErrorLogs(logsData)
@@ -112,6 +116,8 @@ export default function AdminDashboard() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Username</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Admin</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Created At</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Transcriptions</th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -120,6 +126,8 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{user.username}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.is_admin ? 'Yes' : 'No'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{new Date(user.created_at).toLocaleString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.transcription_count}</td>
                 </tr>
               ))}
             </tbody>
@@ -134,7 +142,8 @@ export default function AdminDashboard() {
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Created At</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Updated At</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
@@ -145,7 +154,13 @@ export default function AdminDashboard() {
               {transcriptions.map((transcription) => (
                 <tr key={transcription.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{transcription.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{transcription.user_id}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    {transcription.audio_file_path.split('/').pop()?.split('\\').pop()?.split('.')[0]}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <div>{transcription.username}</div>
+                    <div className="text-xs">ID: {transcription.user_id}</div>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{new Date(transcription.created_at).toLocaleString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{new Date(transcription.updated_at).toLocaleString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{transcription.status}</td>
@@ -164,7 +179,7 @@ export default function AdminDashboard() {
                     </button>
                     <dialog
                       id={`modal-${transcription.id}`}
-                      className="modal p-6 max-w-md mx-auto rounded-lg bg-white dark:bg-gray-800 shadow-xl backdrop:bg-black backdrop:opacity-50"
+                      className="modal p-6 mx-auto rounded-lg bg-white dark:bg-gray-800 shadow-xl backdrop:bg-black backdrop:opacity-50"
                       onClick={(e) => {
                         const modal = e.target as HTMLDialogElement
                         const rect = modal.getBoundingClientRect()
@@ -183,30 +198,6 @@ export default function AdminDashboard() {
                           <h3 className="text-lg font-bold dark:text-white mr-2">Transcription Files</h3>
                         </div>
                         <div className="space-y-3">
-                          {transcription.audio_file_path && (
-                            <div className="flex justify-between items-center">
-                              <span className="dark:text-white">Audio File</span>
-                              <Button onClick={(e) => {handleDownload(e, transcription.audio_file_path)}}>Download</Button>
-                            </div>
-                          )}
-                          {transcription.txt_document_path && (
-                            <div className="flex justify-between items-center">
-                              <span className="dark:text-white">Text Document</span>
-                              <Button onClick={(e) => {handleDownload(e, transcription.txt_document_path)}}>Download</Button>
-                            </div>
-                          )}
-                          {transcription.md_document_path && (
-                            <div className="flex justify-between items-center">
-                              <span className="dark:text-white mr-2">Markdown Document</span>
-                              <Button onClick={(e) => {handleDownload(e, transcription.md_document_path)}}>Download</Button>
-                            </div>
-                          )}
-                          {transcription.word_document_path && (
-                            <div className="flex justify-between items-center">
-                              <span className="dark:text-white">Word Document</span>
-                              <Button onClick={(e) => {handleDownload(e, transcription.word_document_path)}}>Download</Button>
-                            </div>
-                          )}
                           {transcription.google_drive_url && (
                             <div className="flex justify-between items-center">
                               <span className="dark:text-white">Google Drive</span>
@@ -218,6 +209,42 @@ export default function AdminDashboard() {
                               >
                                 Open
                               </a>
+                            </div>
+                          )}
+                          {transcription.audio_file_path && (
+                            <div className="flex justify-between items-center">
+                              <div className="dark:text-white">
+                                <span className="font-semibold">Audio File:</span>
+                                <span className="ml-2 mr-2">{transcription.audio_file_path.split('/').pop()}</span>
+                              </div>
+                              <Button onClick={(e) => { handleDownload(e, transcription.audio_file_path) }}>Download</Button>
+                            </div>
+                          )}
+                          {transcription.txt_document_path && (
+                            <div className="flex justify-between items-center">
+                              <div className="dark:text-white">
+                                <span className="font-semibold">Text Document:</span>
+                                <span className="ml-2 mr-2">{transcription.txt_document_path.split('/').pop()}</span>
+                              </div>
+                              <Button onClick={(e) => { handleDownload(e, transcription.txt_document_path) }}>Download</Button>
+                            </div>
+                          )}
+                          {transcription.md_document_path && (
+                            <div className="flex justify-between items-center">
+                              <div className="dark:text-white">
+                                <span className="font-semibold">Markdown Document:</span>
+                                <span className="ml-2 mr-2">{transcription.md_document_path.split('/').pop()}</span>
+                              </div>
+                              <Button onClick={(e) => { handleDownload(e, transcription.md_document_path) }}>Download</Button>
+                            </div>
+                          )}
+                          {transcription.word_document_path && (
+                            <div className="flex justify-between items-center">
+                              <div className="dark:text-white">
+                                <span className="font-semibold">Word Document:</span>
+                                <span className="ml-2 mr-2">{transcription.word_document_path.split('/').pop()}</span>
+                              </div>
+                              <Button onClick={(e) => { handleDownload(e, transcription.word_document_path) }}>Download</Button>
                             </div>
                           )}
                         </div>

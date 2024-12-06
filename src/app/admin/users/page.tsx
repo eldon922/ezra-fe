@@ -14,6 +14,8 @@ type User = {
   id: number
   username: string
   is_admin: boolean
+  created_at: string
+  transcription_count: number
 }
 
 export default function AdminSetting() {
@@ -174,6 +176,8 @@ export default function AdminSetting() {
                 <TableHead>Id</TableHead>
                 <TableHead>Username</TableHead>
                 <TableHead>Admin</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead>Transcription Count</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -183,6 +187,8 @@ export default function AdminSetting() {
                   <TableCell>{user.id}</TableCell>
                   <TableCell>{user.username}</TableCell>
                   <TableCell>{user.is_admin ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>{new Date(user.created_at).toLocaleString()}</TableCell>
+                  <TableCell>{user.transcription_count}</TableCell>
                   <TableCell>
                     <Button
                       variant="destructive"
