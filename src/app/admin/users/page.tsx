@@ -23,7 +23,6 @@ export default function AdminSetting() {
   const [users, setUsers] = useState<Array<User>>([])
   const [newUsername, setNewUsername] = useState('')
   const [newPassword, setNewPassword] = useState('')
-  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -57,7 +56,6 @@ export default function AdminSetting() {
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setIsLoading(true);
 
     try {
@@ -96,10 +94,12 @@ export default function AdminSetting() {
     }
   }
 
-  const handleDeleteUser = async (userId: number) => {
-    setError('');
+  const handleDeleteUser = async (user: User) => {
+    if (!confirm(`Are you sure you want to delete user: ${user.username}?\nThis is a destructive action, all of the data related to this user (${user.username}) including transcriptions will be DELETED PERMANENTLY.`)) {
+      return
+    }
     try {
-      const response = await fetch(`/api/admin/users?id=${userId}`, {
+      const response = await fetch(`/api/admin/users?id=${user.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +157,6 @@ export default function AdminSetting() {
                 disabled={isLoading}
               />
             </div>
-            {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" disabled={isLoading}>
               {isLoading ? <>Adding<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Add User'}
             </Button>
@@ -192,7 +191,7 @@ export default function AdminSetting() {
                   <TableCell>
                     <Button
                       variant="destructive"
-                      onClick={() => handleDeleteUser(user.id)}
+                      onClick={() => handleDeleteUser(user)}
                       disabled={user.is_admin}
                     >
                       Delete
