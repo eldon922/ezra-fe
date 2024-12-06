@@ -50,7 +50,7 @@ export default function SystemPrompts() {
         description: `Failed to fetch system prompts (${error})`,
       })
     }
-  }, [])
+  }, [toast])
 
   const fetchSystemPromptActive = useCallback(async () => {
     try {
@@ -75,7 +75,7 @@ export default function SystemPrompts() {
         description: `Failed to fetch active system prompt (${error})`,
       })
     }
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     fetchSystemPrompts()

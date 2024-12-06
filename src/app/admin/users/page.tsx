@@ -48,7 +48,7 @@ export default function AdminSetting() {
         description: `Failed to fetch users (${error})`,
       })
     }
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     fetchUsers()
