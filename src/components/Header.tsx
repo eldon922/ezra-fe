@@ -37,8 +37,11 @@ export default function Header() {
                   <Link href="/admin/users" className="text-muted-foreground hover:text-foreground">
                     Users
                   </Link>
-                  <Link href="/admin/system-prompts" className="text-muted-foreground hover:text-foreground">
-                    System Prompts
+                  <Link href="/admin/transcribe-prompts" className="text-muted-foreground hover:text-foreground">
+                    Transcribe Prompts
+                  </Link>
+                  <Link href="/admin/proofread-prompts" className="text-muted-foreground hover:text-foreground">
+                    Proofread Prompts
                   </Link>
                 </>
               )}

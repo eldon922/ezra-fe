@@ -10,7 +10,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { useToast } from '@/hooks/use-toast'
 import React, { useCallback, useEffect, useState } from 'react'
 
-type SystemPrompt = {
+type ProofreadPrompt = {
   id: number
   version: string
   prompt: string
@@ -18,18 +18,18 @@ type SystemPrompt = {
   created_at: string
 }
 
-export default function SystemPrompts() {
+export default function ProofreadPrompts() {
   const { toast } = useToast()
-  const [systemPrompts, setSystemPrompts] = useState<Array<SystemPrompt>>([])
-  const [activeSystemPrompt, setActiveSystemPrompt] = useState<SystemPrompt>()
+  const [proofreadPrompts, setProofreadPrompts] = useState<Array<ProofreadPrompt>>([])
+  const [activeProofreadPrompt, setActiveProofreadPrompt] = useState<ProofreadPrompt>()
   const [newVersion, setNewVersion] = useState('')
   const [newPrompt, setNewPrompt] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const fetchSystemPrompts = useCallback(async () => {
+  const fetchProofreadPrompts = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/system-prompts', {
+      const response = await fetch('/api/admin/proofread-prompts', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -38,23 +38,23 @@ export default function SystemPrompts() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Failed to fetch system prompts (${errorData})`);
+        throw new Error(`Failed to fetch proofread prompts (${errorData})`);
       }
 
       const data = await response.json();
-      setSystemPrompts(data);
+      setProofreadPrompts(data);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: `Failed to fetch system prompts (${error})`,
+        description: `Failed to fetch proofread prompts (${error})`,
       })
     }
   }, [toast])
 
-  const fetchSystemPromptActive = useCallback(async () => {
+  const fetchProofreadPromptActive = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/settings/active-system-prompt', {
+      const response = await fetch('/api/admin/settings/active-proofread-prompt', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -63,32 +63,32 @@ export default function SystemPrompts() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Failed to fetch active system prompt (${errorData})`);
+        throw new Error(`Failed to fetch active proofread prompt (${errorData})`);
       }
 
       const data = await response.json();
-      setActiveSystemPrompt(data);
+      setActiveProofreadPrompt(data);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: `Failed to fetch active system prompt (${error})`,
+        description: `Failed to fetch active proofread prompt (${error})`,
       })
     }
   }, [toast])
 
   useEffect(() => {
-    fetchSystemPrompts()
-    fetchSystemPromptActive()
-  }, [fetchSystemPrompts, fetchSystemPromptActive])
+    fetchProofreadPrompts()
+    fetchProofreadPromptActive()
+  }, [fetchProofreadPrompts, fetchProofreadPromptActive])
 
-  const handleAddSystemPrompt = async (e: React.FormEvent) => {
+  const handleAddProofreadPrompt = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/admin/system-prompts', {
+      const response = await fetch('/api/admin/proofread-prompts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,57 +101,57 @@ export default function SystemPrompts() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Failed to add system prompt (${errorData})`);
+        throw new Error(`Failed to add proofread prompt (${errorData})`);
       }
 
       toast({
         title: "Success",
-        description: `Add system prompt success`,
+        description: `Add proofread prompt success`,
       })
 
-      await fetchSystemPrompts();
+      await fetchProofreadPrompts();
       setNewVersion('');
       setNewPrompt('');
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: `Failed to add system prompt (${error})`,
+        description: `Failed to add proofread prompt (${error})`,
       })
     } finally {
       setIsLoading(false);
     }
   }
 
-  const handleSetSystemPromptActive = async (systemPromptId: string) => {
+  const handleSetProofreadPromptActive = async (proofreadPromptId: string) => {
     setError('');
     try {
-      const response = await fetch(`/api/admin/settings/active-system-prompt`, {
+      const response = await fetch(`/api/admin/settings/active-proofread-prompt`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          system_prompt_id: systemPromptId
+          proofread_prompt_id: proofreadPromptId
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to activate system prompt');
+        throw new Error(errorData.error || 'Failed to activate proofread prompt');
       }
 
       toast({
         title: "Success",
-        description: `Set system prompt success`,
+        description: `Activate proofread prompt success`,
       })
 
-      await fetchSystemPromptActive();
+      await fetchProofreadPromptActive();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: `Failed to activate system prompt (${error})`,
+        description: `Failed to activate proofread prompt (${error})`,
       })
     }
   }
@@ -161,10 +161,10 @@ export default function SystemPrompts() {
       <Toaster />
       <Card>
         <CardHeader>
-          <CardTitle>Add New System Prompt</CardTitle>
+          <CardTitle>Add New Proofread Prompt</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAddSystemPrompt} className="space-y-4">
+          <form onSubmit={handleAddProofreadPrompt} className="space-y-4">
             <div>
               <Label htmlFor="newVersion">Version</Label>
               <Input
@@ -190,7 +190,7 @@ export default function SystemPrompts() {
             </div>
             {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? <>Adding<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Add System Prompt'}
+              {isLoading ? <>Adding<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Add Proofread Prompt'}
             </Button>
           </form>
         </CardContent>
@@ -198,17 +198,17 @@ export default function SystemPrompts() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Active System Prompt</CardTitle>
+          <CardTitle>Active Proofread Prompt</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              onChange={(e) => handleSetSystemPromptActive(e.target.value)}
-              value={activeSystemPrompt?.id}
+              onChange={(e) => handleSetProofreadPromptActive(e.target.value)}
+              value={activeProofreadPrompt?.id}
             >
               <option>Select a version to activate</option>
-              {systemPrompts.map((prompt) => (
+              {proofreadPrompts.map((prompt) => (
                 <option key={prompt.id} value={prompt.id}>
                   {prompt.version.toString()} - {prompt.prompt.toString().substring(0, 50)}...
                 </option>
@@ -220,7 +220,7 @@ export default function SystemPrompts() {
 
       <Card>
         <CardHeader>
-          <CardTitle>System Prompts</CardTitle>
+          <CardTitle>Proofread Prompts</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -233,7 +233,7 @@ export default function SystemPrompts() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {systemPrompts.map((prompt) => (
+              {proofreadPrompts.map((prompt) => (
                 <TableRow key={prompt.id}>
                   <TableCell>{prompt.id}</TableCell>
                   <TableCell>{prompt.version}</TableCell>

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/admin/settings/active-system-prompt`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/admin/proofread-prompts`, {
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
       },
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Error fetching active system prompt:', error)
+    console.error('Error fetching proofread prompts:', error)
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 })
   }
 }
@@ -35,20 +35,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 
-  const { system_prompt_id } = await req.json()
+  const { version, prompt } = await req.json()
 
-  if (!system_prompt_id) {
-    return NextResponse.json({ error: 'System prompt id is required' }, { status: 400 })
+  if (!version || !prompt) {
+    return NextResponse.json({ error: 'Version and prompt are required' }, { status: 400 })
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/admin/settings/active-system-prompt`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/admin/proofread-prompts`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ system_prompt_id }),
+      body: JSON.stringify({ version, prompt: prompt }),
     })
 
     const data = await response.json()
@@ -57,9 +57,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: data.error }, { status: response.status })
     }
 
-    return NextResponse.json({ message: 'System prompt activated successfully' }, { status: 201 })
+    return NextResponse.json({ message: 'Proofread prompt created successfully' }, { status: 201 })
   } catch (error) {
-    console.error('Error activate system prompt:', error)
+    console.error('Error creating proofread prompt:', error)
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 })
   }
 }

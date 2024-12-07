@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/admin/system-prompts`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/admin/transcribe-prompts`, {
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
       },
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Error fetching system prompts:', error)
+    console.error('Error fetching transcribe prompts:', error)
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 })
   }
 }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/admin/system-prompts`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/admin/transcribe-prompts`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
@@ -57,9 +57,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: data.error }, { status: response.status })
     }
 
-    return NextResponse.json({ message: 'System prompt created successfully' }, { status: 201 })
+    return NextResponse.json({ message: 'Transcribe prompt created successfully' }, { status: 201 })
   } catch (error) {
-    console.error('Error creating system prompt:', error)
+    console.error('Error creating transcribe prompt:', error)
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 })
   }
 }
