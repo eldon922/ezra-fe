@@ -18,6 +18,7 @@ type Transcription = {
   updated_at: string
   status: 'completed' | 'error' | 'waiting' | 'transcribing' | 'proofreading' | 'converting'
   word_document_path: string
+  txt_document_path: string
   audio_file_name: string
 }
 
@@ -191,11 +192,18 @@ export default function Dashboard() {
                   <TableCell>{item.audio_file_name}</TableCell>
                   <TableCell>
                     {item.status === 'completed' ? (
-                      <Button onClick={(e) => {
-                        e.preventDefault()
-                        e.nativeEvent.stopImmediatePropagation()
-                        window.location.href = `/api/download/${item.word_document_path}`
-                      }}>Download</Button>
+                      <>
+                        <Button onClick={(e) => {
+                          e.preventDefault()
+                          e.nativeEvent.stopImmediatePropagation()
+                          window.location.href = `/api/download/${item.word_document_path}`
+                        }}>Download</Button>
+                        <Button onClick={(e) => {
+                          e.preventDefault()
+                          e.nativeEvent.stopImmediatePropagation()
+                          window.location.href = `/api/download/${item.txt_document_path}`
+                        }}>Download TXT</Button>
+                      </>
                     ) : (
                       'N/A'
                     )}
