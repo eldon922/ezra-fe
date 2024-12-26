@@ -198,11 +198,11 @@ export default function Dashboard() {
                           e.nativeEvent.stopImmediatePropagation()
                           window.location.href = `/api/download/${item.word_document_path}`
                         }}>Download</Button>
-                        <Button onClick={(e) => {
+                        {/* <Button onClick={(e) => {
                           e.preventDefault()
                           e.nativeEvent.stopImmediatePropagation()
                           window.location.href = `/api/download/${item.txt_document_path}`
-                        }}>Download TXT</Button>
+                        }}>Download TXT</Button> */}
                       </>
                     ) : (
                       'N/A'
