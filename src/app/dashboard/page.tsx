@@ -143,7 +143,7 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            {/* <div>
               <Label htmlFor="file">Audio File</Label>
               <Input
                 key={file ? 'file-input' : 'empty-input'}
@@ -153,7 +153,7 @@ export default function Dashboard() {
                 accept="audio/*"
                 value={file ? undefined : ''}
               />
-            </div>
+            </div> */}
             <div>
               <Label htmlFor="driveLink">Google Drive Link</Label>
               <Input
