@@ -3,18 +3,19 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ username: string, filename: string }> }
+  { params }: { params: Promise<{ username: string, transcription_id: string, filename: string }> }
 ) {
   try {
     const token = await getToken({ req })
 
-    if (!token || !token.isAdmin) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+    if (!token) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 403 })
     }
 
     const username = (await params).username
+    const transcription_id = (await params).transcription_id
     const filename = (await params).filename
-    const response = await fetch(`${process.env.BACKEND_URL}/admin/download/md/${username}/${filename}`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/download/word/${username}/${transcription_id}/${filename}`, {
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
       },
@@ -24,7 +25,7 @@ export async function GET(
 
     return new NextResponse(data, {
       headers: {
-        'Content-Type': 'text/markdown',
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'Content-Disposition': `attachment; filename="${filename}"`,
       },
     })
