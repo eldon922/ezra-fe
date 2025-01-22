@@ -99,7 +99,7 @@ export default function AdminDashboard() {
     window.location.href = `/api/admin/download/${filePath}`
   }
 
-  const handleDeleteTranscription = async (transcription_id: String) => {
+  const handleDeleteTranscription = async (transcription_id: string) => {
     if (!confirm(`Are you sure you want to delete transcription with id: ${transcription_id}?`)) {
       return
     }
