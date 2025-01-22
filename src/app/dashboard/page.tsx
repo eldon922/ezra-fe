@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 
 type Transcription = {
-  id: number
+  id: string
   created_at: string
   updated_at: string
   status: 'completed' | 'error' | 'waiting' | 'transcribing' | 'proofreading' | 'converting'

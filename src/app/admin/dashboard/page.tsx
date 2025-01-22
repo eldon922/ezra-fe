@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { useTheme } from 'next-themes';
+import { useToast } from '@/hooks/use-toast';
 
 type User = {
   id: number
@@ -16,7 +17,7 @@ type User = {
 }
 
 type Transcription = {
-  id: number
+  id: string
   user_id: number
   audio_file_path: string
   google_drive_url: string
@@ -46,42 +47,47 @@ type Stats = {
 
 export default function AdminDashboard() {
   const { theme } = useTheme()
+  const { toast } = useToast()
   const { data: session } = useSession()
   const [users, setUsers] = useState<User[]>([])
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([])
   const [errorLogs, setErrorLogs] = useState<ErrorLog[]>([])
   const [stats, setStats] = useState<Stats>({ total_users: 0, total_transcriptions: 0, total_errors: 0 })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [usersRes, transcriptionsRes, logsRes, statsRes] = await Promise.all([
-          fetch('/api/admin/users'),
-          fetch('/api/admin/transcriptions'),
-          fetch('/api/admin/logs'),
-          fetch('/api/admin/stats'),
-        ])
+  const fetchData = useCallback(async () => {
+    try {
+      const [usersRes, transcriptionsRes, logsRes, statsRes] = await Promise.all([
+        fetch('/api/admin/users'),
+        fetch('/api/admin/transcriptions'),
+        fetch('/api/admin/logs'),
+        fetch('/api/admin/stats'),
+      ])
 
-        const [usersData, transcriptionsData, logsData, statsData] = await Promise.all([
-          usersRes.json(),
-          transcriptionsRes.json(),
-          logsRes.json(),
-          statsRes.json(),
-        ])
+      const [usersData, transcriptionsData, logsData, statsData] = await Promise.all([
+        usersRes.json(),
+        transcriptionsRes.json(),
+        logsRes.json(),
+        statsRes.json(),
+      ])
 
-        setUsers(usersData)
-        setTranscriptions(transcriptionsData)
-        setErrorLogs(logsData)
-        setStats(statsData)
-      } catch (error) {
-        console.error('Error fetching admin data:', error)
-      }
+      setUsers(usersData)
+      setTranscriptions(transcriptionsData)
+      setErrorLogs(logsData)
+      setStats(statsData)
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Error fetching admin data (${error})`,
+      })
     }
+  }, [toast])
 
+  useEffect(() => {
     if (session?.user?.isAdmin) {
       fetchData()
     }
-  }, [session])
+  }, [session, fetchData])
 
   if (!session?.user?.isAdmin) {
     return null
@@ -91,6 +97,38 @@ export default function AdminDashboard() {
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
     window.location.href = `/api/admin/download/${filePath}`
+  }
+
+  const handleDeleteTranscription = async (transcription_id: String) => {
+    if (!confirm(`Are you sure you want to delete transcription with id: ${transcription_id}?`)) {
+      return
+    }
+    try {
+      const response = await fetch(`/api/admin/transcriptions?id=${transcription_id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete transcription');
+      }
+
+      toast({
+        title: "Success",
+        description: "Delete transcription success",
+      })
+
+      await fetchData();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to delete transcription (${error})`,
+      })
+    }
   }
 
   return (
@@ -160,7 +198,7 @@ export default function AdminDashboard() {
                 <tr key={transcription.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{transcription.id}</td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                    {transcription.audio_file_path.split('/').pop()?.split('\\').pop()?.split('.')[0]}
+                    {transcription.audio_file_path && transcription.audio_file_path.split('/').pop()?.split('\\').pop()?.split('.')[0]}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     <div>{transcription.username}</div>
@@ -170,6 +208,12 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{new Date(transcription.updated_at).toLocaleString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{transcription.status}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <Button
+                      variant="destructive"
+                      onClick={() => handleDeleteTranscription(transcription.id)}
+                    >
+                      Delete
+                    </Button>
                     <button
                       onClick={() => {
                         const modal = document.getElementById(`modal-${transcription.id}`) as HTMLDialogElement
