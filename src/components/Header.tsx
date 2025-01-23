@@ -21,7 +21,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Link href="/" className="text-2xl font-bold text-foreground">Ezra ASR</Link>
-          <span className="text-xs text-muted-foreground">v{pjson.version}</span>
+          <span className="text-xs text-muted-foreground bg-red-500 text-white rounded px-2 py-1">v{pjson.version}</span>
         </div>
         <nav className="flex items-center gap-4">
           {isAuthenticated && (
