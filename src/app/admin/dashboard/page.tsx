@@ -7,6 +7,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 type User = {
   id: number
@@ -214,38 +215,18 @@ export default function AdminDashboard() {
                     >
                       Delete
                     </Button>
-                    <button
-                      onClick={() => {
-                        const modal = document.getElementById(`modal-${transcription.id}`) as HTMLDialogElement
-                        if (modal) {
-                          document.body.style.overflow = 'hidden'
-                          modal.showModal()
-                        }
-                      }}
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-                    >
-                      View Files
-                    </button>
-                    <dialog
-                      id={`modal-${transcription.id}`}
-                      className="modal p-6 mx-auto rounded-lg bg-white dark:bg-gray-800 shadow-xl backdrop:bg-black backdrop:opacity-50"
-                      onClick={(e) => {
-                        const modal = e.target as HTMLDialogElement
-                        const rect = modal.getBoundingClientRect()
-                        const isInDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
-                          rect.left <= e.clientX && e.clientX <= rect.left + rect.width)
-                        if (!isInDialog) {
-                          modal.close()
-                        }
-                      }}
-                      onClose={() => {
-                        document.body.style.overflow = 'auto'
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <div className="flex justify-between items-center mb-4">
-                          <h3 className="text-lg font-bold dark:text-white mr-2">Transcription Files</h3>
-                        </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                        >
+                          View Files
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="p-6 mx-auto rounded-lg bg-white dark:bg-gray-800 shadow-xl sm:max-w-[1000px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-lg font-bold dark:text-white">Transcription Files</DialogTitle>
+                        </DialogHeader>
                         <div className="space-y-3">
                           {transcription.google_drive_url && (
                             <div className="flex justify-between items-center">
@@ -297,8 +278,8 @@ export default function AdminDashboard() {
                             </div>
                           )}
                         </div>
-                      </div>
-                    </dialog>
+                      </DialogContent>
+                    </Dialog>
                   </td>
                 </tr>
               ))}

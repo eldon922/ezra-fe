@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 type Transcription = {
   id: string
@@ -138,9 +139,31 @@ export default function Dashboard() {
     <div className="space-y-8">
       <Toaster />
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Upload Audio for Transcription</CardTitle>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+              >
+                Watch Tutorial Upload to Google Drive
+              </button>
+            </DialogTrigger>
+            <DialogContent className="lg:max-w-[1000px] h-[600px]">
+              <DialogTitle className="sr-only text-lg font-bold dark:text-white">Upload audio to Google Drive and share publicly tutorial</DialogTitle>
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/moVJE5h_np8"
+                title="Upload audio to Google Drive and share publicly tutorial"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* <div>
