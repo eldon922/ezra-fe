@@ -15,7 +15,7 @@ export async function GET(
     const username = (await params).username
     const transcription_id = (await params).transcription_id
     const filename = (await params).filename
-    const response = await fetch(`${process.env.BACKEND_URL}/download/user-files/word/${username}/${transcription_id}/${filename}`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/download/word/${username}/${transcription_id}/${filename}`, {
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
       },
