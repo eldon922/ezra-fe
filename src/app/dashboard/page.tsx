@@ -140,7 +140,7 @@ export default function Dashboard() {
       <Toaster />
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Upload Audio for Transcription</CardTitle>
+          <CardTitle>Upload Audio/Video for Transcription</CardTitle>
 
           <Dialog>
             <DialogTrigger asChild>
