@@ -178,13 +178,13 @@ export default function Dashboard() {
               />
             </div> */}
             <div>
-              <Label htmlFor="driveLink">Google Drive Link</Label>
+              <Label htmlFor="driveLink">Google Drive or Youtube Link</Label>
               <Input
                 id="driveLink"
                 type="text"
                 value={driveLink}
                 onChange={(e) => setDriveLink(e.target.value)}
-                placeholder="https://drive.google.com/..."
+                placeholder="https://drive.google.com/... or https://youtube.com/... or https://youtu.be/..."
               />
             </div>
             <Button type="submit" disabled={isProcessing}>
