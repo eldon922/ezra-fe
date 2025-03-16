@@ -241,7 +241,7 @@ export default function AdminDashboard() {
                               </a>
                             </div>
                           )}
-                          {transcription.audio_file_path && (
+                          {/* {transcription.audio_file_path && (
                             <div className="flex justify-between items-center">
                               <div className="dark:text-white">
                                 <span className="font-semibold">Audio File:</span>
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
                               </div>
                               <Button onClick={(e) => { handleDownload(e, transcription.audio_file_path) }}>Download</Button>
                             </div>
-                          )}
+                          )} */}
                           {transcription.txt_document_path && (
                             <div className="flex justify-between items-center">
                               <div className="dark:text-white">
