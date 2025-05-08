@@ -89,6 +89,16 @@ export default function Dashboard() {
       return
     }
 
+    if (driveLink && driveLink.includes('folders')) {
+      toast({
+        variant: "destructive",
+        title: "Kesalahan",
+        description: "Mohon berikan link file langsung, bukan link folder",
+      })
+      setIsProcessing(false)
+      return
+    }
+
     const formData = new FormData()
     if (file && file.size !== 0) {
       formData.append('file', file)
