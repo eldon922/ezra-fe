@@ -23,6 +23,16 @@ type Transcription = {
   audio_file_name: string
 }
 
+// Add this mapping to show Indonesian status
+const statusMessages = {
+  completed: 'Selesai',
+  error: 'Terjadi Kesalahan',
+  waiting: 'Menunggu Antrian',
+  transcribing: 'Mentranskripsi Audio',
+  proofreading: 'Melakukan Proofreading',
+  converting: 'Mengkonversi ke Word',
+}
+
 export default function Dashboard() {
   const { toast } = useToast()
   const { status } = useSession()
@@ -39,7 +49,7 @@ export default function Dashboard() {
         const data = await response.json()
         toast({
           variant: "destructive",
-          title: "Error",
+          title: "Kesalahan",
           description: data.error,
         })
         return
@@ -49,8 +59,8 @@ export default function Dashboard() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: `An unexpected error occurred while fetching transcriptions (${error})`,
+        title: "Kesalahan",
+        description: `Terjadi kesalahan saat mengambil data transkripsi (${error})`,
       })
     }
   }, [toast])
@@ -72,8 +82,8 @@ export default function Dashboard() {
     if ((file && file.size !== 0 && driveLink)) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please provide an audio file or Google Drive link",
+        title: "Kesalahan",
+        description: "Mohon pilih salah satu: file audio atau link Google Drive, jangan keduanya",
       })
       setIsProcessing(false)
       return
@@ -87,8 +97,8 @@ export default function Dashboard() {
     } else {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please provide an audio file or Google Drive link",
+        title: "Kesalahan",
+        description: "Mohon sediakan file audio atau link Google Drive",
       })
       setIsProcessing(false)
       return
@@ -105,15 +115,15 @@ export default function Dashboard() {
       if (!response.ok) {
         toast({
           variant: "destructive",
-          title: "Error",
+          title: "Kesalahan",
           description: data.error,
         })
         return
       }
 
       toast({
-        title: "Success",
-        description: "Audio processing started successfully",
+        title: "Berhasil",
+        description: "Proses audio berhasil dimulai",
       })
 
       await fetchTranscriptions()
@@ -123,8 +133,8 @@ export default function Dashboard() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: `An unexpected error occurred while processing the audio (${error})`,
+        title: "Kesalahan",
+        description: `Terjadi kesalahan saat memproses audio (${error})`,
       })
     } finally {
       setIsProcessing(false)
@@ -132,7 +142,7 @@ export default function Dashboard() {
   }
 
   if (status === 'loading') {
-    return <div>Loading...</div>
+    return <div>Memuat...</div>
   }
 
   return (
@@ -140,23 +150,25 @@ export default function Dashboard() {
       <Toaster />
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Upload Audio/Video for Transcription</CardTitle>
+          <CardTitle>Unggah Audio/Video untuk Transkripsi</CardTitle>
 
           <Dialog>
             <DialogTrigger asChild>
               <button
                 className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
               >
-                Watch Tutorial Upload to Google Drive
+                Tonton Tutorial Unggah ke Google Drive
               </button>
             </DialogTrigger>
             <DialogContent className="lg:max-w-[1000px] h-[600px]">
-              <DialogTitle className="sr-only text-lg font-bold dark:text-white">Upload audio to Google Drive and share publicly tutorial</DialogTitle>
+              <DialogTitle className="sr-only text-lg font-bold dark:text-white">
+                Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik
+              </DialogTitle>
               <iframe
                 width="100%"
                 height="100%"
                 src="https://www.youtube.com/embed/moVJE5h_np8"
-                title="Upload audio to Google Drive and share publicly tutorial"
+                title="Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
@@ -167,7 +179,7 @@ export default function Dashboard() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* <div>
-              <Label htmlFor="file">Audio File</Label>
+              <Label htmlFor="file">File Audio</Label>
               <Input
                 key={file ? 'file-input' : 'empty-input'}
                 id="file"
@@ -178,17 +190,17 @@ export default function Dashboard() {
               />
             </div> */}
             <div>
-              <Label htmlFor="driveLink">Google Drive or Youtube Link</Label>
+              <Label htmlFor="driveLink">Link Google Drive <span className="font-bold text-red-600">(Harus File Audio, Bukan Folder)</span> atau Youtube</Label>
               <Input
                 id="driveLink"
                 type="text"
                 value={driveLink}
                 onChange={(e) => setDriveLink(e.target.value)}
-                placeholder="https://drive.google.com/... or https://youtube.com/... or https://youtu.be/..."
+                placeholder="https://drive.google.com/... atau https://youtube.com/... atau https://youtu.be/..."
               />
             </div>
             <Button type="submit" disabled={isProcessing}>
-              {isProcessing ? <>Processing<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Submit'}
+              {isProcessing ? <>Memproses<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Mulai Transkrip'}
             </Button>
           </form>
         </CardContent>
@@ -196,15 +208,15 @@ export default function Dashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Transcription History</CardTitle>
+          <CardTitle>Riwayat Transkripsi</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Result</TableHead>
+                <TableHead>Tanggal</TableHead>
+                <TableHead>Nama</TableHead>
+                <TableHead>Hasil</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -220,23 +232,25 @@ export default function Dashboard() {
                           e.preventDefault()
                           e.nativeEvent.stopImmediatePropagation()
                           window.location.href = `/api/download/${item.word_document_path}`
-                        }}>Download</Button>
+                        }}>Unduh</Button>
                         {/* <Button onClick={(e) => {
                           e.preventDefault()
                           e.nativeEvent.stopImmediatePropagation()
                           window.location.href = `/api/download/${item.txt_document_path}`
-                        }}>Download TXT</Button> */}
+                        }}>Unduh TXT</Button> */}
                       </>
                     ) : (
                       'N/A'
                     )}
                   </TableCell>
-                  <TableCell><div className="flex items-center">
-                    {item.status !== 'completed' && item.status !== 'error' && (
-                      <LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {item.status}
-                  </div></TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      {item.status !== 'completed' && item.status !== 'error' && (
+                        <LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      {statusMessages[item.status] || item.status}
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

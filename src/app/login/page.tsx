@@ -26,7 +26,7 @@ export default function Login() {
   }, [status, router])
 
   if (status === 'loading') {
-    return <div>Loading...</div>
+    return <div>Memuat...</div>
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,13 +42,13 @@ export default function Login() {
     if (result?.error) {
       toast({
         variant: "destructive",
-        title: "Authentication Error",
-        description: `Failed to log in (${result?.error})`,
+        title: "Error Autentikasi",
+        description: `Gagal masuk (${result?.error})`,
       })
     } else {
       toast({
-        title: "Success",
-        description: "Successfully login!",
+        title: "Berhasil",
+        description: "Berhasil masuk!",
       })
       router.push('/')
     }
@@ -61,12 +61,12 @@ export default function Login() {
       <Toaster />
       <Card className="w-full max-w-md border-border">
         <CardHeader className="flex flex-row justify-between items-center">
-          <CardTitle className="text-2xl font-bold text-foreground">Login to Ezra</CardTitle>
+          <CardTitle className="text-2xl font-bold text-foreground">Masuk ke Ezra</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Nama Pengguna</Label>
               <Input
                 id="username"
                 type="text"
@@ -76,7 +76,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Kata Sandi</Label>
               <Input
                 id="password"
                 type="password"
@@ -86,7 +86,7 @@ export default function Login() {
               />
             </div>
             <Button disabled={isLoading} type="submit" className="w-full">
-              Login
+              Masuk
               {isLoading && <LoadingSpinner className="h-4 w-4 animate-spin" />}
             </Button>
           </form>
