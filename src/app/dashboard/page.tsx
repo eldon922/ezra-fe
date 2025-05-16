@@ -27,8 +27,9 @@ type Transcription = {
 const statusMessages = {
   completed: 'Selesai',
   error: 'Terjadi Kesalahan',
-  waiting: 'Menunggu Antrian',
+  waiting: 'Menginisiasi',
   transcribing: 'Mentranskripsi Audio',
+  waiting_for_proofreading: 'Menunggu Proofreading',
   proofreading: 'Melakukan Proofreading',
   converting: 'Mengkonversi ke Word',
 }
