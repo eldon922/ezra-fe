@@ -25,13 +25,14 @@ type Transcription = {
 
 // Add this mapping to show Indonesian status
 const statusMessages = {
-  completed: 'Selesai',
-  error: 'Terjadi Kesalahan',
+  uploading: 'Mengunggah',
   waiting: 'Menginisiasi',
   transcribing: 'Mentranskripsi Audio',
   waiting_for_proofreading: 'Menunggu Proofreading',
   proofreading: 'Melakukan Proofreading',
   converting: 'Mengkonversi ke Word',
+  completed: 'Selesai',
+  error: 'Terjadi Kesalahan',
 }
 
 export default function Dashboard() {
