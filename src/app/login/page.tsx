@@ -79,7 +79,7 @@ export default function Login() {
               <Label htmlFor="password">Kata Sandi</Label>
               <Input
                 id="password"
-                type="password"
+                type="text"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
