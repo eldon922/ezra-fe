@@ -132,6 +132,11 @@ export default function AdminDashboard() {
     }
   }
 
+  const getFilenameWithoutExtension = (filePath: string) => {
+    const filename = filePath.split(/[/\\]/).pop() || '';
+    return filename.split('.').slice(0, -1).join('.');
+  }
+
   return (
     <div className="max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 dark:text-white">Admin Dashboard</h1>
@@ -199,7 +204,7 @@ export default function AdminDashboard() {
                 <tr key={transcription.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{transcription.id}</td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                    {transcription.audio_file_path && transcription.audio_file_path.split('/').pop()?.split('\\').pop()?.split('.')[0]}
+                    {transcription.audio_file_path && getFilenameWithoutExtension(transcription.audio_file_path)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     <div>{transcription.username}</div>
