@@ -159,9 +159,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div>
       <Toaster />
-      <Card>
+      <Card className="mb-8">
         <CardHeader>
           <CardTitle>Unggah Audio/Video untuk Transkripsi</CardTitle>
         </CardHeader>
