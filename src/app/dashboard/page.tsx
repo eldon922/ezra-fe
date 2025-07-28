@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import Image from 'next/image'
 
 type Transcription = {
   id: string
@@ -161,31 +162,8 @@ export default function Dashboard() {
     <div className="space-y-8">
       <Toaster />
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle>Unggah Audio/Video untuk Transkripsi</CardTitle>
-
-          <Dialog>
-            <DialogTrigger asChild>
-              <button
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-              >
-                Tonton Tutorial Unggah ke Google Drive
-              </button>
-            </DialogTrigger>
-            <DialogContent className="lg:max-w-[1000px] h-[600px]">
-              <DialogTitle className="sr-only text-lg font-bold dark:text-white">
-                Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik
-              </DialogTitle>
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/moVJE5h_np8"
-                title="Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </DialogContent>
-          </Dialog>
         </CardHeader>
 
         <CardContent>
@@ -202,7 +180,7 @@ export default function Dashboard() {
               />
             </div> */}
             <div>
-              <Label htmlFor="driveLink">Link Google Drive <span className="font-bold text-red-600">(Harus File Audio, Bukan Folder)</span> atau Youtube</Label>
+              <Label htmlFor="driveLink">Link <span className="font-bold">Google Drive</span> atau <span className="font-bold">Youtube</span></Label>
               <Input
                 id="driveLink"
                 type="text"
@@ -211,6 +189,61 @@ export default function Dashboard() {
                 placeholder="https://drive.google.com/... atau https://youtube.com/... atau https://youtu.be/..."
               />
             </div>
+            <div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <p>Syarat Link <span className="font-bold">Google Drive:</span></p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Link harus memiliki <span className="font-bold text-red-600">izin akses</span>&nbsp;
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline">
+                          Siapa saja yang memiliki link/Anyone with the link
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="lg:max-w-[800px]">
+                        <DialogTitle className="text-lg font-bold dark:text-white mb-4">
+                          Cara Membagikan File Google Drive
+                        </DialogTitle>
+                        <div className="flex justify-center">
+                          <Image
+                            src="/share.png"
+                            alt="Cara membagikan file Google Drive"
+                            width={800}
+                            height={600}
+                            className="max-w-full h-auto rounded-lg shadow-lg"
+                          />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </li>
+                  <li>Link harus mengarah ke <span className="font-bold text-red-600">file audio, bukan folder</span></li>
+                </ul>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
+                    >
+                      Tonton Tutorial Unggah ke Google Drive
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="lg:max-w-[1000px] h-[600px]">
+                    <DialogTitle className="sr-only text-lg font-bold dark:text-white">
+                      Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik
+                    </DialogTitle>
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src="https://www.youtube.com/embed/moVJE5h_np8?autoplay=1&cc_load_policy=1&cc_lang_pref=id&hl=id"
+                      title="Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
             <Button type="submit" disabled={isProcessing}>
               {isProcessing ? <>Memproses<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Mulai Transkrip'}
             </Button>

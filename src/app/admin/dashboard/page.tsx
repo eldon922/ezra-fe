@@ -235,7 +235,7 @@ export default function AdminDashboard() {
                         <div className="space-y-3">
                           {transcription.google_drive_url && (
                             <div className="flex justify-between items-center">
-                              <span className="dark:text-white">Google Drive</span>
+                              <span className="dark:text-white">Audio Link</span>
                               <a
                                 href={transcription.google_drive_url}
                                 target="_blank"
