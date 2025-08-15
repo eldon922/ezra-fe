@@ -25,7 +25,7 @@ type Transcription = {
   txt_document_path: string
   md_document_path: string
   word_document_path: string
-  status: 'completed' | 'error' | 'waiting' | 'transcribing' | 'proofreading' | 'converting'
+  status: 'submitted' | 'uploading' | 'trimming' | 'waiting' | 'transcribing' | 'waiting_for_proofreading' | 'proofreading' | 'converting' | 'completed' | 'error'
   created_at: string
   updated_at: string
   username: string

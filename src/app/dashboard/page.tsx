@@ -18,7 +18,7 @@ type Transcription = {
   id: string
   created_at: string
   updated_at: string
-  status: 'completed' | 'error' | 'waiting' | 'transcribing' | 'proofreading' | 'converting'
+  status: 'submitted' | 'uploading' | 'trimming' | 'waiting' | 'transcribing' | 'waiting_for_proofreading' | 'proofreading' | 'converting' | 'completed' | 'error'
   word_document_path: string
   txt_document_path: string
   audio_file_name: string
@@ -26,7 +26,9 @@ type Transcription = {
 
 // Add this mapping to show Indonesian status
 const statusMessages = {
+  submitted: 'Dikirim',
   uploading: 'Mengunggah',
+  trimming: 'Memotong Audio',
   waiting: 'Menginisiasi',
   transcribing: 'Mentranskripsi Audio',
   waiting_for_proofreading: 'Menunggu Proofreading',
@@ -44,6 +46,58 @@ export default function Dashboard() {
   const [driveLink, setDriveLink] = useState('')
   const [transcriptions, setTranscriptions] = useState<Array<Transcription>>([])
   const [isProcessing, setIsProcessing] = useState(false)
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+
+  const formatTimeInput = (value: string) => {
+    // Remove any non-digit characters (we'll handle colons automatically)
+    const digitsOnly = value.replace(/[^0-9]/g, '')
+    
+    // Process digits and validate each position
+    let validatedDigits = ''
+    
+    for (let i = 0; i < digitsOnly.length && i < 6; i++) {
+      const digit = digitsOnly[i]
+      const position = i % 2 // 0 for first digit of pair, 1 for second digit
+      const segment = Math.floor(i / 2) // 0 for hours, 1 for minutes, 2 for seconds
+      
+      if (segment === 0) {
+        // Hours: allow any digit (00-99)
+        validatedDigits += digit
+      } else {
+        // Minutes and seconds: must be 00-59
+        if (position === 0) {
+          // First digit of minutes/seconds: can only be 0-5
+          if (parseInt(digit) <= 5) {
+            validatedDigits += digit
+          } else {
+            break // Stop processing if invalid first digit
+          }
+        } else {
+          // Second digit: can be any digit 0-9
+          validatedDigits += digit
+        }
+      }
+    }
+    
+    // Auto-format with colons: HHMMSS -> HH:MM:SS
+    let formatted = ''
+    for (let i = 0; i < validatedDigits.length; i++) {
+      if (i === 2 || i === 4) {
+        formatted += ':'
+      }
+      formatted += validatedDigits[i]
+    }
+    
+    return formatted
+  }
+
+  const handleTimeKeyDown = (e: React.KeyboardEvent) => {
+    // Only allow digits and navigation keys
+    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault()
+    }
+  }
 
   const fetchTranscriptions = useCallback(async () => {
     try {
@@ -111,10 +165,18 @@ export default function Dashboard() {
       toast({
         variant: "destructive",
         title: "Kesalahan",
-        description: "Mohon sediakan file audio atau link Google Drive",
+        description: "Mohon sediakan link Google Drive atau Youtube",
       })
       setIsProcessing(false)
       return
+    }
+
+    // Add trimming times if provided
+    if (startTime) {
+      formData.append('start_time', startTime)
+    }
+    if (endTime) {
+      formData.append('end_time', endTime)
     }
 
     try {
@@ -143,6 +205,8 @@ export default function Dashboard() {
       setFile(null)
       setTimeout(() => setFile(new File([], '')), 0)
       setDriveLink('')
+      setStartTime('')
+      setEndTime('')
     } catch (error) {
       toast({
         variant: "destructive",
@@ -244,6 +308,49 @@ export default function Dashboard() {
               </div>
             </div>
 
+            <div className="space-y-1">
+              <Label className="font-semibold">Potong Audio (Opsional)</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="startTime">Waktu Mulai (hh:mm:ss)</Label>
+                  <Input
+                    id="startTime"
+                    type="text"
+                    value={startTime}
+                    onChange={(e) => {
+                      const formattedValue = formatTimeInput(e.target.value)
+                      setStartTime(formattedValue)
+                    }}
+                    onKeyDown={handleTimeKeyDown}
+                    placeholder="00:01:30"
+                    pattern="[0-9]{1,2}:[0-9]{2}:[0-9]{2}"
+                    title="Masukkan waktu mulai dalam format hh:mm:ss"
+                    maxLength={8}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="endTime">Waktu Selesai (hh:mm:ss)</Label>
+                  <Input
+                    id="endTime"
+                    type="text"
+                    value={endTime}
+                    onChange={(e) => {
+                      const formattedValue = formatTimeInput(e.target.value)
+                      setEndTime(formattedValue)
+                    }}
+                    onKeyDown={handleTimeKeyDown}
+                    placeholder="00:05:45"
+                    pattern="[0-9]{1,2}:[0-9]{2}:[0-9]{2}"
+                    title="Masukkan waktu selesai dalam format hh:mm:ss"
+                    maxLength={8}
+                  />
+                </div>
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                <p>Format: jam:menit:detik (contoh: 00:01:30 untuk 1 menit 30 detik)</p>
+                <p>Kosongkan jika ingin memproses seluruh audio</p>
+              </div>
+            </div>
             <Button type="submit" disabled={isProcessing}>
               {isProcessing ? <>Memproses<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Mulai Transkrip'}
             </Button>
