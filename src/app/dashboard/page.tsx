@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Image from 'next/image'
+import { Upload, Clock, CheckCircle, XCircle, AlertCircle, FileText, Calendar, Download, ExternalLink, Play, Square } from 'lucide-react'
 
 type Transcription = {
   id: string
@@ -52,15 +53,15 @@ export default function Dashboard() {
   const formatTimeInput = (value: string) => {
     // Remove any non-digit characters (we'll handle colons automatically)
     const digitsOnly = value.replace(/[^0-9]/g, '')
-    
+
     // Process digits and validate each position
     let validatedDigits = ''
-    
+
     for (let i = 0; i < digitsOnly.length && i < 6; i++) {
       const digit = digitsOnly[i]
       const position = i % 2 // 0 for first digit of pair, 1 for second digit
       const segment = Math.floor(i / 2) // 0 for hours, 1 for minutes, 2 for seconds
-      
+
       if (segment === 0) {
         // Hours: allow any digit (00-99)
         validatedDigits += digit
@@ -79,7 +80,7 @@ export default function Dashboard() {
         }
       }
     }
-    
+
     // Auto-format with colons: HHMMSS -> HH:MM:SS
     let formatted = ''
     for (let i = 0; i < validatedDigits.length; i++) {
@@ -88,7 +89,7 @@ export default function Dashboard() {
       }
       formatted += validatedDigits[i]
     }
-    
+
     return formatted
   }
 
@@ -227,7 +228,10 @@ export default function Dashboard() {
       <Toaster />
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Unggah Audio/Video untuk Transkripsi</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Upload className="h-5 w-5 text-blue-600" />
+            Unggah Audio/Video untuk Transkripsi
+          </CardTitle>
         </CardHeader>
 
         <CardContent>
@@ -244,7 +248,10 @@ export default function Dashboard() {
               />
             </div> */}
             <div>
-              <Label htmlFor="driveLink">Link <span className="font-bold">Google Drive</span> atau <span className="font-bold">Youtube</span></Label>
+              <Label htmlFor="driveLink" className="flex items-center gap-2 mb-2">
+                <ExternalLink className="h-4 w-4 text-blue-600" />
+                Link <span className="font-bold">Google Drive</span> atau <span className="font-bold">Youtube</span>
+              </Label>
               <Input
                 id="driveLink"
                 type="text"
@@ -308,11 +315,17 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <Label className="font-semibold">Potong Audio (Opsional)</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="startTime">Waktu Mulai (hh:mm:ss)</Label>
+            <div className="space-y-4">
+              <Label className="font-semibold flex items-center gap-2">
+                <Clock className="h-4 w-4 text-blue-600" />
+                Potong Audio (Opsional)
+              </Label>
+              <div className="flex items-end gap-4">
+                <div className="flex-1">
+                  <Label htmlFor="startTime" className="flex items-center gap-2 mb-2">
+                    <Play className="h-3 w-3 text-green-600" />
+                    Waktu Mulai (hh:mm:ss)
+                  </Label>
                   <Input
                     id="startTime"
                     type="text"
@@ -328,8 +341,14 @@ export default function Dashboard() {
                     maxLength={8}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="endTime">Waktu Selesai (hh:mm:ss)</Label>
+                <div className="flex items-center justify-center pb-2">
+                  <span className="text-gray-500 dark:text-gray-400 font-bold text-lg">—</span>
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="endTime" className="flex items-center gap-2 mb-2">
+                    <Square className="h-3 w-3 text-red-600" />
+                    Waktu Selesai (hh:mm:ss)
+                  </Label>
                   <Input
                     id="endTime"
                     type="text"
@@ -351,7 +370,7 @@ export default function Dashboard() {
                 <p>Kosongkan jika ingin memproses seluruh audio</p>
               </div>
             </div>
-            <Button type="submit" disabled={isProcessing}>
+            <Button type="submit" disabled={isProcessing} className="bg-blue-600 hover:bg-blue-700 text-white">
               {isProcessing ? <>Memproses<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Mulai Transkrip'}
             </Button>
           </form>
@@ -360,23 +379,106 @@ export default function Dashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Riwayat Transkripsi</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-green-600" />
+            Riwayat Transkripsi
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
+            <colgroup>
+              <col className="w-36" />
+              <col className="w-auto" />
+              <col className="w-28" />
+              <col className="w-36" />
+            </colgroup>
             <TableHeader>
-              <TableRow>
-                <TableHead>Tanggal</TableHead>
-                <TableHead>Nama</TableHead>
-                <TableHead>Hasil</TableHead>
-                <TableHead>Status</TableHead>
+              <TableRow className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-blue-600" />
+                    Tanggal
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-purple-600" />
+                    Nama
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <Download className="h-4 w-4 text-green-600" />
+                    Hasil
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-yellow-600" />
+                    Status
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transcriptions.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
-                  <TableCell>{item.audio_file_name}</TableCell>
+              {transcriptions.map((item, index) => (
+                <TableRow 
+                  key={item.id} 
+                  className={`
+                    transition-colors border-b border-gray-200 dark:border-gray-600
+                    ${index % 2 === 0 
+                      ? 'bg-white dark:bg-gray-900 hover:bg-blue-100 dark:hover:bg-gray-800' 
+                      : 'bg-blue-50 dark:bg-gray-800 hover:bg-blue-200 dark:hover:bg-gray-700'
+                    }
+                  `}
+                >
+                  <TableCell className="font-medium text-gray-700 dark:text-gray-300">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        {new Date(item.created_at).toLocaleTimeString('id-ID', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true
+                        })}
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {(() => {
+                          const now = new Date();
+                          const createdAt = new Date(item.created_at);
+                          const diffInMinutes = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
+                          const diffInHours = Math.floor(diffInMinutes / 60);
+                          
+                          const fullDate = createdAt.toLocaleDateString('id-ID', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                          });
+                          
+                          if (diffInHours < 24) {
+                            let relativeTime;
+                            if (diffInMinutes < 1) {
+                              relativeTime = "Baru saja";
+                            } else if (diffInMinutes < 60) {
+                              relativeTime = diffInMinutes === 1 ? "1 menit yang lalu" : `${diffInMinutes} menit yang lalu`;
+                            } else if (diffInHours === 1) {
+                              relativeTime = "1 jam yang lalu";
+                            } else {
+                              relativeTime = `${diffInHours} jam yang lalu`;
+                            }
+                            return `${relativeTime} • ${fullDate}`;
+                          } else {
+                            return fullDate;
+                          }
+                        })()}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-gray-900 dark:text-gray-100 font-medium">
+                    <div className="break-words" title={item.audio_file_name}>
+                      {item.audio_file_name}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     {item.status === 'completed' ? (
                       <>
@@ -384,7 +486,10 @@ export default function Dashboard() {
                           e.preventDefault()
                           e.nativeEvent.stopImmediatePropagation()
                           window.location.href = `/api/download/${item.word_document_path}`
-                        }}>Unduh</Button>
+                        }} className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
+                          <Download className="h-4 w-4" />
+                          Unduh
+                        </Button>
                         {/* <Button onClick={(e) => {
                           e.preventDefault()
                           e.nativeEvent.stopImmediatePropagation()
@@ -392,15 +497,22 @@ export default function Dashboard() {
                         }}>Unduh TXT</Button> */}
                       </>
                     ) : (
-                      'N/A'
+                      <span className="text-gray-500 dark:text-gray-400">N/A</span>
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center">
+                    <div className={`flex items-center gap-2 ${item.status === 'completed' ? 'text-green-600' :
+                        item.status === 'error' ? 'text-red-600' :
+                          'text-blue-600'
+                      }`}>
+                      {item.status === 'completed' && <CheckCircle className="h-4 w-4" />}
+                      {item.status === 'error' && <XCircle className="h-4 w-4" />}
                       {item.status !== 'completed' && item.status !== 'error' && (
-                        <LoadingSpinner className="mr-2 h-4 w-4 animate-spin" />
+                        <LoadingSpinner className="h-4 w-4 animate-spin" />
                       )}
-                      {statusMessages[item.status] || item.status}
+                      <span className="font-medium">
+                        {statusMessages[item.status] || item.status}
+                      </span>
                     </div>
                   </TableCell>
                 </TableRow>

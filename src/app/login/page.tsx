@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/spinner'
@@ -57,41 +56,60 @@ export default function Login() {
   }
 
   return (
-    <div className="flex justify-center items-center bg-background">
+    <div className="flex items-center justify-center p-8">
       <Toaster />
-      <Card className="w-full max-w-md border-border">
-        <CardHeader className="flex flex-row justify-between items-center">
-          <CardTitle className="text-2xl font-bold text-foreground">Masuk ke Ezra</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="username">Nama Pengguna</Label>
-              <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Kata Sandi</Label>
-              <Input
-                id="password"
-                type="text"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button disabled={isLoading} type="submit" className="w-full">
-              Masuk
-              {isLoading && <LoadingSpinner className="h-4 w-4 animate-spin" />}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-sm">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">LOGIN</h1>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="username" className="block text-sm font-medium mb-1">
+              Username
+            </Label>
+            <Input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full"
+              placeholder="Masukkan username"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="password" className="block text-sm font-medium mb-1">
+              Password
+            </Label>
+            <Input
+              id="password"
+              type="text"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full"
+              placeholder="Masukkan password"
+            />
+          </div>
+          
+          <Button 
+            disabled={isLoading} 
+            type="submit" 
+            className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {isLoading ? (
+              <>
+                <LoadingSpinner className="h-4 w-4 animate-spin mr-2" />
+                Masuk...
+              </>
+            ) : (
+              'Masuk'
+            )}
+          </Button>
+        </form>
+      </div>
     </div>
   )
 }
