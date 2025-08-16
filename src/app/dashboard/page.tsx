@@ -226,7 +226,7 @@ export default function Dashboard() {
   return (
     <div>
       <Toaster />
-      <Card className="mb-8">
+      <Card className="mb-5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5 text-blue-600" />

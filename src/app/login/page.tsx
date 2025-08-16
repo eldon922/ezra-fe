@@ -60,7 +60,7 @@ export default function Login() {
       <Toaster />
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-sm">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">LOGIN</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">LOGIN</h1>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">

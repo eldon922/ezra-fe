@@ -42,7 +42,7 @@ export default function RootLayout({
         <NextTopLoader />
         <Providers>
           <Header />
-          <main className="container mx-auto px-4 py-8">{children}</main>
+          <main className="container mx-auto px-4 py-5">{children}</main>
         </Providers>
       </body>
     </html>
