@@ -262,56 +262,65 @@ export default function Dashboard() {
             </div>
             <div>
               <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                <p>Syarat Link <span className="font-bold">Google Drive:</span></p>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Link harus memiliki <span className="font-bold text-red-600">izin akses</span>&nbsp;
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <button className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline">
-                          Siapa saja yang memiliki link/Anyone with the link
-                        </button>
-                      </DialogTrigger>
-                      <DialogContent className="lg:max-w-[800px]">
-                        <DialogTitle className="text-lg font-bold dark:text-white mb-4">
-                          Cara Membagikan File Google Drive
-                        </DialogTitle>
-                        <div className="flex justify-center">
-                          <Image
-                            src="/share.png"
-                            alt="Cara membagikan file Google Drive"
-                            width={800}
-                            height={600}
-                            className="max-w-full h-auto rounded-lg shadow-lg"
-                          />
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </li>
-                  <li>Link harus mengarah ke <span className="font-bold text-red-600">file audio, bukan folder</span></li>
-                </ul>
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-4">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                      <p>Syarat Link <span className="font-bold">Google Drive:</span></p>
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>Link harus memiliki <span className="font-bold text-red-600">izin akses</span>&nbsp;
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline">
+                                Siapa saja yang memiliki link/Anyone with the link
+                              </button>
+                            </DialogTrigger>
+                            <DialogContent className="lg:max-w-[600px] h-[600px]">
+                              <DialogTitle className="text-lg font-bold dark:text-white mb-4">
+                                Cara Membagikan File Google Drive
+                              </DialogTitle>
+                              <div className="flex justify-center overflow-auto">
+                                <Image
+                                  src="/share.png"
+                                  alt="Cara membagikan file Google Drive"
+                                  width={800}
+                                  height={600}
+                                  className="w-full max-w-4xl h-auto object-contain rounded-lg shadow-lg"
+                                />
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </li>
+                        <li>Link harus mengarah ke <span className="font-bold text-red-600">file audio, bukan folder</span></li>
+                      </ul>
 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
-                    >
-                      Tonton Tutorial Unggah ke Google Drive
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="lg:max-w-[1000px] h-[600px]">
-                    <DialogTitle className="sr-only text-lg font-bold dark:text-white">
-                      Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik
-                    </DialogTitle>
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src="https://www.youtube.com/embed/moVJE5h_np8?autoplay=1&cc_load_policy=1&cc_lang_pref=id&hl=id"
-                      title="Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </DialogContent>
-                </Dialog>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button
+                            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
+                          >
+                            Tonton Tutorial Unggah ke Google Drive
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="lg:max-w-[1000px] h-[600px]">
+                          <DialogTitle className="sr-only text-lg font-bold dark:text-white">
+                            Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik
+                          </DialogTitle>
+                          <div className="flex justify-center items-center h-full">
+                            <iframe
+                              width="97%"
+                              height="100%"
+                              src="https://www.youtube.com/embed/moVJE5h_np8?autoplay=1&cc_load_policy=1&cc_lang_pref=id&hl=id"
+                              title="Tutorial Mengunggah Audio ke Google Drive dan Membagikan Secara Publik"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            ></iframe>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -370,6 +379,16 @@ export default function Dashboard() {
                 <p>Kosongkan jika ingin memproses seluruh audio</p>
               </div>
             </div>
+
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-4">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <p>Disarankan untuk memotong audio agar hanya berisi <span className="font-bold">khotbah yang ingin ditranskripsi</span>. Hapus bagian musik, liturgis, atau aktivitas lain yang tidak perlu ditranskripsi untuk hasil yang lebih akurat.</p>
+                </div>
+              </div>
+            </div>
+
             <Button type="submit" disabled={isProcessing} className="bg-blue-600 hover:bg-blue-700 text-white">
               {isProcessing ? <>Memproses<LoadingSpinner className="h-4 w-4 animate-spin" /></> : 'Mulai Transkrip'}
             </Button>
@@ -387,7 +406,7 @@ export default function Dashboard() {
         <CardContent>
           <Table>
             <colgroup>
-              <col className="w-36" />
+              <col className="w-40" />
               <col className="w-auto" />
               <col className="w-28" />
               <col className="w-36" />
@@ -414,7 +433,7 @@ export default function Dashboard() {
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-yellow-600" />
+                    <CheckCircle className="h-4 w-4 text-yellow-600" />
                     Status
                   </div>
                 </TableHead>
@@ -422,12 +441,12 @@ export default function Dashboard() {
             </TableHeader>
             <TableBody>
               {transcriptions.map((item, index) => (
-                <TableRow 
-                  key={item.id} 
+                <TableRow
+                  key={item.id}
                   className={`
                     transition-colors border-b border-gray-200 dark:border-gray-600
-                    ${index % 2 === 0 
-                      ? 'bg-white dark:bg-gray-900 hover:bg-blue-100 dark:hover:bg-gray-800' 
+                    ${index % 2 === 0
+                      ? 'bg-white dark:bg-gray-900 hover:bg-blue-100 dark:hover:bg-gray-800'
                       : 'bg-blue-50 dark:bg-gray-800 hover:bg-blue-200 dark:hover:bg-gray-700'
                     }
                   `}
@@ -447,14 +466,14 @@ export default function Dashboard() {
                           const createdAt = new Date(item.created_at);
                           const diffInMinutes = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
                           const diffInHours = Math.floor(diffInMinutes / 60);
-                          
+
                           const fullDate = createdAt.toLocaleDateString('id-ID', {
                             weekday: 'long',
                             day: '2-digit',
                             month: 'long',
                             year: 'numeric'
                           });
-                          
+
                           if (diffInHours < 24) {
                             let relativeTime;
                             if (diffInMinutes < 1) {
@@ -466,11 +485,17 @@ export default function Dashboard() {
                             } else {
                               relativeTime = `${diffInHours} jam yang lalu`;
                             }
-                            return `${relativeTime} • ${fullDate}`;
-                          } else {
-                            return fullDate;
+                            return relativeTime;
                           }
                         })()}
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(item.created_at).toLocaleDateString('id-ID', {
+                          weekday: 'long',
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
                       </span>
                     </div>
                   </TableCell>
@@ -502,8 +527,8 @@ export default function Dashboard() {
                   </TableCell>
                   <TableCell>
                     <div className={`flex items-center gap-2 ${item.status === 'completed' ? 'text-green-600' :
-                        item.status === 'error' ? 'text-red-600' :
-                          'text-blue-600'
+                      item.status === 'error' ? 'text-red-600' :
+                        'text-blue-600'
                       }`}>
                       {item.status === 'completed' && <CheckCircle className="h-4 w-4" />}
                       {item.status === 'error' && <XCircle className="h-4 w-4" />}
