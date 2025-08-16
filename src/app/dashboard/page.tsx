@@ -467,13 +467,6 @@ export default function Dashboard() {
                           const diffInMinutes = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
                           const diffInHours = Math.floor(diffInMinutes / 60);
 
-                          const fullDate = createdAt.toLocaleDateString('id-ID', {
-                            weekday: 'long',
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric'
-                          });
-
                           if (diffInHours < 24) {
                             let relativeTime;
                             if (diffInMinutes < 1) {
