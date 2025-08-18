@@ -39,7 +39,7 @@ const statusMessages = {
   error: 'Terjadi Kesalahan',
 }
 
-export default function Dashboard() {
+export default function Transcribe() {
   const { toast } = useToast()
   const { status } = useSession()
   const router = useRouter()

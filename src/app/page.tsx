@@ -14,7 +14,7 @@ export default function Home() {
     } else if (isAdmin) {
       router.push('/admin/dashboard')
     } else {
-      router.push('/dashboard')
+      router.push('/transcribe')
     }
   }, [isAuthenticated, isAdmin, router])
 }

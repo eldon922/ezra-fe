@@ -27,10 +27,10 @@ export default function Header() {
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground hidden sm:block">Ada masalah? Hubungi tim IT support kami</span>
               <span className="text-muted-foreground block sm:hidden">Support:</span>
-              <a 
-                href="https://wa.me/+6289618113757" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://wa.me/+6289618113757"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white px-2 py-0.5 rounded-full transition-colors text-xs"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -74,8 +74,8 @@ export default function Header() {
             {isAuthenticated && (
               <>
                 {!isAdmin ? (
-                  <Link 
-                    href="/dashboard" 
+                  <Link
+                    href="/transcribe"
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors text-sm"
                   >
                     <span className="text-sm">📄</span>
@@ -83,42 +83,49 @@ export default function Header() {
                   </Link>
                 ) : (
                   <div className="flex items-center gap-1">
-                    <Link 
-                      href="/admin/dashboard" 
+                    <Link
+                      href="/admin/dashboard"
                       className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors text-sm"
                     >
                       <span className="text-sm">📊</span>
                       Dashboard
                     </Link>
-                    <Link 
-                      href="/admin/users" 
+                    <Link
+                      href="/admin/users"
                       className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors text-sm"
                     >
                       <span className="text-sm">👥</span>
                       Users
                     </Link>
-                    <Link 
-                      href="/admin/transcribe-prompts" 
+                    <Link
+                      href="/admin/transcribe-prompts"
                       className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors text-sm"
                     >
                       <span className="text-sm">📝</span>
                       Transcribe
                     </Link>
-                    <Link 
-                      href="/admin/proofread-prompts" 
+                    <Link
+                      href="/admin/proofread-prompts"
                       className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors text-sm"
                     >
                       <span className="text-sm">✏️</span>
                       Proofread
                     </Link>
+                    <Link
+                      href="/transcribe"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors text-sm"
+                    >
+                      <span className="text-sm">📄</span>
+                      Transkrip
+                    </Link>
                   </div>
                 )}
-                <Button 
-                  disabled={isLoading} 
+                <Button
+                  disabled={isLoading}
                   onClick={() => {
                     setIsLoading(true)
                     logout()
-                  }} 
+                  }}
                   variant="secondary"
                   size="sm"
                   className="flex items-center gap-2"
@@ -134,7 +141,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           {isAuthenticated && (
             <div className="lg:hidden flex items-center gap-2">
-              <Button 
+              <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -162,8 +169,8 @@ export default function Header() {
           <div className="lg:hidden border-t border-border/50 py-3">
             <nav className="flex flex-col gap-2">
               {!isAdmin ? (
-                <Link 
-                  href="/dashboard" 
+                <Link
+                  href="/transcribe"
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -172,46 +179,54 @@ export default function Header() {
                 </Link>
               ) : (
                 <>
-                  <Link 
-                    href="/admin/dashboard" 
+                  <Link
+                    href="/admin/dashboard"
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="text-sm">📊</span>
                     Dashboard
                   </Link>
-                  <Link 
-                    href="/admin/users" 
+                  <Link
+                    href="/admin/users"
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="text-sm">👥</span>
                     Users
                   </Link>
-                  <Link 
-                    href="/admin/transcribe-prompts" 
+                  <Link
+                    href="/admin/transcribe-prompts"
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="text-sm">📝</span>
                     Transcribe
                   </Link>
-                  <Link 
-                    href="/admin/proofread-prompts" 
+                  <Link
+                    href="/admin/proofread-prompts"
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="text-sm">✏️</span>
                     Proofread
                   </Link>
+                  <Link
+                    href="/transcribe"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span className="text-sm">📄</span>
+                    Transkrip
+                  </Link>
                 </>
               )}
-              <Button 
-                disabled={isLoading} 
+              <Button
+                disabled={isLoading}
                 onClick={() => {
                   setIsLoading(true)
                   logout()
-                }} 
+                }}
                 variant="secondary"
                 className="flex items-center gap-2 justify-start mt-2"
               >
