@@ -511,7 +511,7 @@ export default function Transcribe() {
                             Unduh
                           </Button>
                         </Link>
-                        <Link
+                        {/* <Link
                           href={`/api/download/txt/${item.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -520,7 +520,7 @@ export default function Transcribe() {
                             <Download className="h-4 w-4" />
                             Unduh TXT
                           </Button>
-                        </Link>
+                        </Link> */}
                       </>
                     ) : (
                       <span className="text-gray-500 dark:text-gray-400">N/A</span>
