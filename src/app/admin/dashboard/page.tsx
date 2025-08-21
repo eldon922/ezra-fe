@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertCircle } from 'lucide-react';
+import Link from 'next/link';
 
 type User = {
   id: number
@@ -93,12 +94,6 @@ export default function AdminDashboard() {
 
   if (!session?.user?.isAdmin) {
     return null
-  }
-
-  const handleDownload = (e: React.MouseEvent, filePath: string) => {
-    e.preventDefault()
-    e.nativeEvent.stopImmediatePropagation()
-    window.location.href = `/api/admin/download/${filePath}`
   }
 
   const handleDeleteTranscription = async (transcription_id: string) => {
@@ -260,13 +255,12 @@ export default function AdminDashboard() {
                     <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                         <span>Activity Level</span>
-                        <span className={`px-2 py-1 rounded-full ${
-                          user.transcription_count > 10 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                            : user.transcription_count > 5 
-                            ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                        }`}>
+                        <span className={`px-2 py-1 rounded-full ${user.transcription_count > 10
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                            : user.transcription_count > 5
+                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                          }`}>
                           {user.transcription_count > 10 ? 'High' : user.transcription_count > 5 ? 'Medium' : 'Low'}
                         </span>
                       </div>
@@ -357,13 +351,12 @@ export default function AdminDashboard() {
                             <AlertCircle className="h-4 w-4 text-yellow-600" />
                           </div>
                           <div>
-                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                              transcription.status === 'completed' 
+                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${transcription.status === 'completed'
                                 ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
                                 : transcription.status === 'error'
-                                ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
-                                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
-                            }`}>
+                                  ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
+                              }`}>
                               {transcription.status}
                             </span>
                           </div>
@@ -396,20 +389,25 @@ export default function AdminDashboard() {
                                 </div>
                                 <div>
                                   <p className="font-semibold text-blue-800 dark:text-blue-200">Audio File</p>
-                                  <p className="text-xs text-blue-600 dark:text-blue-400">Google Drive Link</p>
+                                  <p className="text-xs text-blue-600 dark:text-blue-400">Google Drive or YouTube Link</p>
                                 </div>
                               </div>
-                              <Button
-                                onClick={() => window.open(transcription.google_drive_url, '_blank', 'noopener,noreferrer')}
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
-                                size="sm"
+                              <Link
+                                href={transcription.google_drive_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
                               >
-                                <span className="mr-2">🔗</span>
-                                Open
-                              </Button>
+                                <Button
+                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                  size="sm"
+                                >
+                                  <span className="mr-2">🔗</span>
+                                  Open
+                                </Button>
+                              </Link>
                             </div>
                           )}
-                          
+
                           {transcription.txt_document_path && (
                             <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
                               <div className="flex items-center space-x-3">
@@ -421,14 +419,19 @@ export default function AdminDashboard() {
                                   <p className="text-xs text-green-600 dark:text-green-400">{transcription.txt_document_path.split('/').pop()}</p>
                                 </div>
                               </div>
-                              <Button 
-                                onClick={(e) => handleDownload(e, transcription.txt_document_path)} 
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                                size="sm"
+                              <Link
+                                href={`/api/admin/download/txt/${transcription.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                               >
-                                <span className="mr-2">⬇️</span>
-                                Download
-                              </Button>
+                                <Button 
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  size="sm"
+                                >
+                                  <span className="mr-2">⬇️</span>
+                                  Download
+                                </Button>
+                              </Link>
                             </div>
                           )}
 
@@ -443,14 +446,19 @@ export default function AdminDashboard() {
                                   <p className="text-xs text-purple-600 dark:text-purple-400">{transcription.md_document_path.split('/').pop()}</p>
                                 </div>
                               </div>
-                              <Button 
-                                onClick={(e) => handleDownload(e, transcription.md_document_path)} 
-                                className="bg-purple-600 hover:bg-purple-700 text-white"
-                                size="sm"
+                              <Link
+                                href={`/api/admin/download/md/${transcription.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                               >
-                                <span className="mr-2">⬇️</span>
-                                Download
-                              </Button>
+                                <Button 
+                                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                                  size="sm"
+                                >
+                                  <span className="mr-2">⬇️</span>
+                                  Download
+                                </Button>
+                              </Link>
                             </div>
                           )}
 
@@ -465,20 +473,25 @@ export default function AdminDashboard() {
                                   <p className="text-xs text-orange-600 dark:text-orange-400">{transcription.word_document_path.split('/').pop()}</p>
                                 </div>
                               </div>
-                              <Button 
-                                onClick={(e) => handleDownload(e, transcription.word_document_path)} 
-                                className="bg-orange-600 hover:bg-orange-700 text-white"
-                                size="sm"
+                              <Link
+                                href={`/api/admin/download/word/${transcription.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                               >
-                                <span className="mr-2">⬇️</span>
-                                Download
-                              </Button>
+                                <Button 
+                                  className="bg-orange-600 hover:bg-orange-700 text-white"
+                                  size="sm"
+                                >
+                                  <span className="mr-2">⬇️</span>
+                                  Download
+                                </Button>
+                              </Link>
                             </div>
                           )}
                         </div>
                       </DialogContent>
                     </Dialog>
-                    
+
                     <Button
                       size="sm"
                       variant="destructive"
@@ -527,7 +540,7 @@ export default function AdminDashboard() {
                           {new Date(log.created_at).toLocaleString()}
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="flex items-center space-x-2">
                           <span className="text-sm font-medium text-gray-500 dark:text-gray-400">User ID:</span>
@@ -556,9 +569,9 @@ export default function AdminDashboard() {
                         <div>
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
+                              <Button
+                                size="sm"
+                                variant="outline"
                                 className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                               >
                                 <span className="mr-2">🔍</span>
@@ -577,7 +590,7 @@ export default function AdminDashboard() {
                                   <SyntaxHighlighter
                                     language="javascript"
                                     style={theme === 'dark' ? atomOneDark : atomOneLight}
-                                    customStyle={{ 
+                                    customStyle={{
                                       backgroundColor: 'transparent',
                                       fontSize: '12px',
                                       lineHeight: '1.4'

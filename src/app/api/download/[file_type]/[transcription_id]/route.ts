@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ username: string, transcription_id: string, filename: string }> }
+  { params }: { params: Promise<{ file_type: string, transcription_id: string}> }
 ) {
   try {
     const token = await getToken({ req })
@@ -11,24 +11,15 @@ export async function GET(
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 403 })
     }
-
-    const username = (await params).username
+    const file_type = (await params).file_type
     const transcription_id = (await params).transcription_id
-    const filename = (await params).filename
-    const response = await fetch(`${process.env.BACKEND_URL}/download/txt/${username}/${transcription_id}/${filename}`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/download/${file_type}/${transcription_id}`, {
       headers: {
         'Authorization': `Bearer ${token.accessToken}`,
       },
     })
 
-    const data = await response.arrayBuffer()
-
-    return new NextResponse(data, {
-      headers: {
-        'Content-Type': 'text/plain',
-        'Content-Disposition': `attachment; filename="${filename}"`,
-      },
-    })
+    return response
   } catch (error) {
     console.error('Download error:', error)
     return new NextResponse('Internal Server Error', { status: 500 })

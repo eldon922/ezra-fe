@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Image from 'next/image'
 import { Upload, Clock, CheckCircle, XCircle, AlertCircle, FileText, Calendar, Download, ExternalLink, Play, Square } from 'lucide-react'
+import Link from 'next/link'
 
 type Transcription = {
   id: string
@@ -166,7 +167,7 @@ export default function Transcribe() {
       toast({
         variant: "destructive",
         title: "Kesalahan",
-        description: "Mohon sediakan link Google Drive atau Youtube",
+        description: "Mohon sediakan link Google Drive atau YouTube",
       })
       setIsProcessing(false)
       return
@@ -250,7 +251,7 @@ export default function Transcribe() {
             <div>
               <Label htmlFor="driveLink" className="flex items-center gap-2 mb-2">
                 <ExternalLink className="h-4 w-4 text-blue-600" />
-                Link <span className="font-bold">Google Drive</span> atau <span className="font-bold">Youtube</span>
+                Link <span className="font-bold">Google Drive</span> atau <span className="font-bold">YouTube</span>
               </Label>
               <Input
                 id="driveLink"
@@ -500,19 +501,26 @@ export default function Transcribe() {
                   <TableCell>
                     {item.status === 'completed' ? (
                       <>
-                        <Button onClick={(e) => {
-                          e.preventDefault()
-                          e.nativeEvent.stopImmediatePropagation()
-                          window.location.href = `/api/download/${item.word_document_path}`
-                        }} className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
-                          <Download className="h-4 w-4" />
-                          Unduh
-                        </Button>
-                        {/* <Button onClick={(e) => {
-                          e.preventDefault()
-                          e.nativeEvent.stopImmediatePropagation()
-                          window.location.href = `/api/download/${item.txt_document_path}`
-                        }}>Unduh TXT</Button> */}
+                        <Link
+                          href={`/api/download/word/${item.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
+                            <Download className="h-4 w-4" />
+                            Unduh
+                          </Button>
+                        </Link>
+                        <Link
+                          href={`/api/download/txt/${item.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
+                            <Download className="h-4 w-4" />
+                            Unduh TXT
+                          </Button>
+                        </Link>
                       </>
                     ) : (
                       <span className="text-gray-500 dark:text-gray-400">N/A</span>
